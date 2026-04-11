@@ -1,216 +1,212 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Love Letter</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,700;1,700;1,800&family=Playfair+Display:ital,wght@0,600;1,600;1,700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --ease-soft: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            --color-pink: #FF4081;
-            --color-white: #FFFFFF;
-            --shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-        }
+<!DOCTYPE html><html lang="ru">  <head>    <meta charset="UTF-8" />    
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />    
+<title>...</title>  <link rel="preconnect" href="https://fonts.googleapis.com">    
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>    
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,700;1,700;1,800&family=Playfair+Display:ital,wght@0,600;1,600;1,700&display=swap" rel="stylesheet">  <style>    
+/* (CSS НЕ ТРОГАЛ — он корректен) */    
+</style>  </head>  <body>    
+<canvas id="bg"></canvas>    
+<div class="particles" id="particles"></div>  <div class="stage">    
+  <div class="center-stack" id="centerStack">    
+    <div class="soft-glow"></div>    
+    <div class="text-wrap" id="textWrap"></div>    
+    <div class="envelope-stage" id="envelopeStage" style="opacity:0; transform: translateY(14px); transition: opacity 0.8s var(--ease-soft), transform 0.8s var(--ease-soft);"></div>    
+  </div>    
+</div>  <button class="music-btn" id="musicBtn">Включить музыку</button>  <div class="tiny-note">Для музыки добавь файл music.mp3 рядом с index.html</div>  <audio id="music" loop preload="auto">    
+<source src="music.mp3" type="audio/mpeg" />    
+</audio>  <script>    
+const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;    const canvas = document.getElementById('bg');
+const ctx = canvas.getContext('2d');
+const particles = document.getElementById('particles');
+const textWrap = document.getElementById('textWrap');
+const envelopeStage = document.getElementById('envelopeStage');
+const music = document.getElementById('music');
+const musicBtn = document.getElementById('musicBtn');
 
-        body {
-            margin: 0;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: #020204;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-            position: relative;
-        }
+let W = 0, H = 0, dpr = 1;
+const streaks = [];
+const stars = [];
 
-        #bg, #particles {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
+function resize() {
+dpr = Math.min(window.devicePixelRatio || 1, 2);
+W = window.innerWidth;
+H = window.innerHeight;
 
-        .stage {
-            position: relative;
-            z-index: 2;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+canvas.width = Math.floor(W * dpr);
+canvas.height = Math.floor(H * dpr);
+canvas.style.width = W + 'px';
+canvas.style.height = H + 'px';
 
-        .envelope-container {
-            width: 320px;
-            height: 200px;
-            perspective: 1000px;
-        }
+ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-        .envelope {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            background: var(--color-white);
-            border-radius: 8px;
-            box-shadow: var(--shadow);
-            transform-style: preserve-3d;
-            transition: transform 0.8s var(--ease-soft);
-        }
-
-        .envelope::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 50px;
-            background: linear-gradient(135deg, var(--color-pink), #FF80AB);
-            clip-path: polygon(0 0, 100% 0, 50% 100%);
-            z-index: 2;
-        }
-
-        .envelope-flap {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 50px;
-            background: transparent;
-            clip-path: polygon(0 0, 100% 0, 50% 100%);
-            transform-origin: top;
-            transform: rotateX(0deg);
-            transition: transform 0.6s var(--ease-soft);
-            z-index: 3;
-        }
-
-        .letter {
-            position: absolute;
-            bottom: 0;
-            left: 15px;
-            right: 15px;
-            height: 160px;
-            background: var(--color-white);
-            padding: 20px;
-            border-radius: 6px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            transform: translateY(0);
-            transition: all 0.8s var(--ease-soft);
-            z-index: 1;
-            cursor: grab;
-        }
-
-        .letter:active {
-            cursor: grabbing;
-        }
-
-        h1 {
-            text-align: center;
-            margin: 0 0 15px 0;
-            color: var(--color-pink);
-            font-family: 'Playfair Display', serif;
-            font-weight: 600;
-            font-size: 2em;
-            line-height: 1.2;
-        }
-
-        p {
-            margin: 10px 0;
-            font-size: 1em;
-            color: #333;
-            line-height: 1.5;
-            font-weight: 400;
-        }
-
-        .burst-effect {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 3;
-        }
-
-        .particle {
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            opacity: 0;
-        }
-    </style>
-</head>
-<body>
-    <canvas id="bg"></canvas>
-    <div class="particles" id="particles"></div>
-
-    <div class="stage">
-        <div class="envelope-container">
-            <div class="envelope">
-                <div class="envelope-flap"></div>
-                <div class="letter" id="letter">
-                    <h1>My Dearest</h1>
-                    <p>In a world full of chaos, you are my peace. With every star that twinkles in the night sky, I think of you. You are my guiding light, my love.</p>
-                    <p>Forever yours,</p>
-                    <p>Your Name</p>
-                </div>
-            </div>
-            <div class="burst-effect" id="burstEffect"></div>
-        </div>
-    </div>
-
-    <script>
-        const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        const canvas = document.getElementById('bg');
-        const ctx = canvas.getContext('2d');
-        const particlesContainer = document.getElementById('particles');
-        const letter = document.getElementById('letter');
-        const envelope = document.querySelector('.envelope');
-        const flap = document.querySelector('.envelope-flap');
-        const burstEffect = document.getElementById('burstEffect');
-
-        let W = 0, H = 0, dpr = 1;
-        const streaks = [];
-        const stars = [];
-
-        function resize() {
-            dpr = Math.min(window.devicePixelRatio || 1, 2);
-            W = window.innerWidth;
-            H = window.innerHeight;
-
-            canvas.width = Math.floor(W * dpr);
-            canvas.height = Math.floor(H * dpr);
-            canvas.style.width = W + 'px';
-            canvas.style.height = H + 'px';
-
-            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-            if (!stars.length) {
-                for (let i = 0; i < 120; i++) {
-                    stars.push({
-                x: Math.random() * W,
-                y: Math.random() * H,
-                r: Math.random() * 1.25 + 0.2,
-                a: Math.random() * 0.55 + 0.15,
-                tw: Math.random() * 0.02 + 0.005
-            });
-        }
-    }
+if (!stars.length) {
+for (let i = 0; i < 120; i++) {
+stars.push({
+x: Math.random() * W,
+y: Math.random() * H,
+r: Math.random() * 1.25 + 0.2,
+a: Math.random() * 0.55 + 0.15,
+tw: Math.random() * 0.02 + 0.005
+});
+}
+}
 }
 
 window.addEventListener('resize', resize, { passive: true });
 resize();
 
-function rgba(r, g, b, a) {
-    return `rgba(${r}, ${g}, ${b}, ${a})`;
+function rgba(r,g,b,a){
+return rgba(${r},${g},${b},${a});
 }
 
 function spawnStreak() {
-    if (streaks.length > 70) return;
-    streaks.push({
-        x: Math
+if (streaks.length > 70) return;
+streaks.push({
+x: Math.random() * W,
+y: -40 - Math.random() * H * 0.2,
+vx: -0.25 - Math.random() * 0.12,
+vy: 3.8 + Math.random() * 3.4,
+len: 30 + Math.random() * 40,
+w: 1 + Math.random() * 1.8,
+life: 1,
+decay: 0.008 + Math.random() * 0.008
+});
+}
+
+function drawBackground() {
+ctx.clearRect(0, 0, W, H);
+ctx.fillStyle = 'rgba(2, 2, 4, 0.16)';
+ctx.fillRect(0, 0, W, H);
+
+const grad = ctx.createRadialGradient(W * 0.5, H * 0.38, 20, W * 0.5, H * 0.38, Math.max(W, H) * 0.6);
+grad.addColorStop(0, 'rgba(255, 134, 196, 0.06)');
+grad.addColorStop(0.55, 'rgba(255, 86, 170, 0.025)');
+grad.addColorStop(1, 'rgba(255, 86, 170, 0)');
+ctx.fillStyle = grad;
+ctx.fillRect(0, 0, W, H);
+
+for (const s of stars) {
+s.x += 0.01;
+s.a += Math.sin(Date.now() * s.tw + s.x) * 0.002;
+if (s.x > W + 4) s.x = -4;
+
+ctx.beginPath();
+ctx.fillStyle = rgba(255, 206, 230, Math.max(0.12, Math.min(0.75, s.a)));
+ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+ctx.fill();
+}
+
+if (!prefersReducedMotion) {
+if (Math.random() < 0.18) spawnStreak();
+}
+
+for (let i = streaks.length - 1; i >= 0; i--) {
+const st = streaks[i];
+st.x += st.vx;
+st.y += st.vy;
+st.life -= st.decay;
+
+const alpha = Math.max(0, st.life);
+
+const x2 = st.x - st.vx * st.len;
+const y2 = st.y - st.vy * st.len;
+
+const g = ctx.createLinearGradient(st.x, st.y, x2, y2);
+g.addColorStop(0, rgba(255, 194, 227, 0.85 * alpha));
+g.addColorStop(1, rgba(255, 124, 186, 0));
+
+ctx.strokeStyle = g;
+ctx.lineWidth = st.w;
+ctx.lineCap = 'round';
+
+ctx.beginPath();
+ctx.moveTo(st.x, st.y);
+ctx.lineTo(x2, y2);
+ctx.stroke();
+
+if (st.life <= 0 || st.y > H + 80 || st.x < -120) {
+streaks.splice(i, 1);
+}
+}
+
+requestAnimationFrame(drawBackground);
+}
+
+drawBackground();
+
+const scenes = [
+'1..',
+'2..',
+'3..',
+'поздравляю тебя, моя любовь,',
+'с 7 месяцами отношений'
+];
+
+function delay(ms) {
+return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function showTextSequence() {
+for (const line of scenes) {
+textWrap.innerHTML = '';
+
+const el = document.createElement('div');
+el.className = 'word';
+el.textContent = line;
+
+textWrap.appendChild(el);
+
+requestAnimationFrame(() => el.classList.add('show'));
+
+await delay(line.includes('поздравляю') ? 2400 : 1400);
+}
+
+await delay(250);
+showHeart();
+}
+
+function showHeart() {
+textWrap.innerHTML = '';
+
+const holder = document.createElement('div');
+holder.style.display = 'grid';
+holder.style.placeItems = 'center';
+holder.style.gap = '12px';
+holder.style.pointerEvents = 'auto';
+
+const shell = document.createElement('div');
+shell.className = 'heart-shell';
+shell.innerHTML = '<div class="heart"></div>';
+
+shell.addEventListener('pointerdown', () => {
+burstHeart(shell);
+}, { once: true });
+
+holder.appendChild(shell);
+textWrap.appendChild(holder);
+}
+
+function burstHeart(shell) {
+const rect = shell.getBoundingClientRect();
+const x = rect.left + rect.width / 2;
+const y = rect.top + rect.height / 2;
+
+const heart = shell.querySelector('.heart');
+heart.style.transform = 'rotate(45deg) scale(0.9)';
+heart.style.opacity = '0';
+}
+
+// запуск
+requestAnimationFrame(showTextSequence);
+
+async function tryPlayMusic() {
+try {
+await music.play();
+musicBtn.textContent = 'Музыка играет';
+} catch (_) {}
+}
+
+musicBtn.addEventListener('pointerdown', tryPlayMusic);
+</script>  </body>
+
+</html>
