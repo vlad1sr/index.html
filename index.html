@@ -226,8 +226,10 @@ musicBtn.textContent = 'Музыка играет';
 } catch (_) {}
 }
 
+// Универсальные обработчики событий для всех устройств
 musicBtn.addEventListener('pointerdown', tryPlayMusic);
 musicBtn.addEventListener('click', tryPlayMusic);
+musicBtn.addEventListener('touchstart', tryPlayMusic);
 </script>
 </body>
 </html>
