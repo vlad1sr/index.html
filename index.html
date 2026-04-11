@@ -1,1265 +1,1358 @@
 <!DOCTYPE html>
 <html lang="ru">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>...</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,700;0,800;1,700;1,800&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg: #050507;
-      --pink: #ff8acb;
-      --pink-2: #ffb3df;
-      --rose: #ffd1ea;
-      --paper: #f7e6ca;
-      --paper-2: #eecfa5;
-      --paper-dark: #d6ad78;
-      --ink: #2f2118;
-      --shadow: rgba(0, 0, 0, 0.38);
-      --ease-out: cubic-bezier(0.18, 0.88, 0.22, 1);
-      --ease-soft: cubic-bezier(0.2, 0.8, 0.2, 1);
-    }
-
-    * { box-sizing: border-box; }
-
-    html, body {
-      width: 100%;
-      height: 100%;
-      margin: 0;
-      overflow: hidden;
-      background: radial-gradient(1200px 800px at 50% 40%, #120812 0%, #070709 45%, #020203 100%);
-      font-family: Inter, -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
-      -webkit-font-smoothing: antialiased;
-      text-rendering: geometricPrecision;
-      user-select: none;
-      -webkit-user-select: none;
-      overscroll-behavior: none;
-      touch-action: none;
-    }
-
-    canvas#bg {
-      position: fixed;
-      inset: 0;
-      width: 100vw;
-      height: 100vh;
-    }
-
-    .stage {
-      position: fixed;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      pointer-events: none;
-    }
-
-    .center-stack {
-      position: relative;
-      width: min(92vw, 620px);
-      height: min(72vh, 640px);
-      display: grid;
-      place-items: center;
-    }
-
-    .text-wrap {
-      position: absolute;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      padding: 24px;
-      text-align: center;
-      pointer-events: none;
-    }
-
-    .scene-block {
-      position: relative;
-      display: grid;
-      place-items: center;
-      gap: 14px;
-      pointer-events: auto;
-    }
-
-    .word {
-      opacity: 0;
-      transform: translateY(18px) scale(0.985);
-      transition:
-        opacity 1.35s var(--ease-soft),
-        transform 1.35s var(--ease-soft);
-      color: #fff7fb;
-      font-family: Inter, -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
-      font-style: italic;
-      font-weight: 800;
-      letter-spacing: 0.01em;
-      line-height: 1.3;
-      font-size: clamp(28px, 4.4vw, 52px);
-      text-shadow:
-        -1px -1px 0 rgba(0, 0, 0, 0.95),
-        1px -1px 0 rgba(0, 0, 0, 0.95),
-        -1px  1px 0 rgba(0, 0, 0, 0.95),
-        1px  1px 0 rgba(0, 0, 0, 0.95),
-        0 0 16px rgba(0, 0, 0, 0.72),
-        0 0 28px rgba(0, 0, 0, 0.35);
-      filter: drop-shadow(0 0 1px rgba(0,0,0,0.8));
-      max-width: 88vw;
-    }
-
-    .word.show {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
-
-    .heart-shell {
-      position: relative;
-      width: min(24vw, 118px);
-      aspect-ratio: 1;
-      pointer-events: auto;
-      cursor: pointer;
-      border: 0;
-      padding: 0;
-      background: transparent;
-      outline: none;
-      touch-action: manipulation;
-      filter: drop-shadow(0 18px 26px rgba(255, 112, 175, 0.16));
-      transform: translateZ(0);
-    }
-
-    .heart {
-      position: absolute;
-      inset: 18% 18% 18% 18%;
-      transform: rotate(45deg);
-      background: linear-gradient(145deg, #ff7bbd 0%, #ffa8d4 44%, #ff7fbe 100%);
-      border-radius: 18% 18% 10% 10%;
-      box-shadow:
-        inset -10px -12px 18px rgba(167, 18, 92, 0.14),
-        inset 8px 10px 18px rgba(255,255,255,0.2);
-      transition: transform 0.35s var(--ease-soft), opacity 0.35s ease;
-      animation: beat 1.7s var(--ease-soft) infinite;
-      will-change: transform;
-    }
-
-    .heart::before,
-    .heart::after {
-      content: "";
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      background: inherit;
-      box-shadow: inherit;
-    }
-
-    .heart::before { top: -50%; left: 0; }
-    .heart::after { left: -50%; top: 0; }
-
-    @keyframes beat {
-      0%, 100% { transform: rotate(45deg) scale(1); }
-      50% { transform: rotate(45deg) scale(1.08); }
-    }
-
-    .hint {
-      margin-top: 18px;
-      font-size: clamp(17px, 2.2vw, 22px);
-      font-style: italic;
-      font-weight: 700;
-      color: rgba(255, 248, 252, 0.92);
-      text-shadow:
-        -1px -1px 0 rgba(0, 0, 0, 0.95),
-        1px -1px 0 rgba(0, 0, 0, 0.95),
-        -1px  1px 0 rgba(0, 0, 0, 0.95),
-        1px  1px 0 rgba(0, 0, 0, 0.95);
-      opacity: 0;
-      transform: translateY(12px);
-      transition: opacity 1s var(--ease-soft), transform 1s var(--ease-soft);
-      pointer-events: none;
-    }
-
-    .hint.show {
-      opacity: 0.86;
-      transform: translateY(0);
-    }
-
-    .dot {
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 35% 35%, #ffe5f2 0%, #ff9acb 35%, #ff78ba 100%);
-      box-shadow:
-        0 0 0 8px rgba(255, 124, 186, 0.08),
-        0 0 24px rgba(255, 123, 184, 0.32);
-      animation: pulse 1.8s var(--ease-soft) infinite;
-      pointer-events: auto;
-      cursor: pointer;
-      will-change: transform;
-      touch-action: manipulation;
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.16); }
-    }
-
-    .arrow-line {
-      position: absolute;
-      width: 100px;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.82), transparent);
-      transform: rotate(20deg);
-      opacity: 0.85;
-      filter: blur(0.1px);
-      animation: arrowFloat 1.8s ease-in-out infinite;
-    }
-
-    .arrow-tip {
-      position: absolute;
-      width: 14px;
-      height: 14px;
-      border-right: 2px solid rgba(255,255,255,0.85);
-      border-top: 2px solid rgba(255,255,255,0.85);
-      transform: rotate(45deg);
-      right: -1px;
-      top: -6px;
-    }
-
-    @keyframes arrowFloat {
-      0%, 100% { transform: translateY(0) rotate(20deg); }
-      50% { transform: translateY(-8px) rotate(20deg); }
-    }
-
-    .particles {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      overflow: hidden;
-    }
-
-    .particle {
-      position: absolute;
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: linear-gradient(180deg, #ffd7ea, #ff87c8);
-      box-shadow: 0 0 10px rgba(255, 143, 196, 0.45);
-      will-change: transform, opacity;
-      pointer-events: none;
-    }
-
-    .spark {
-      position: absolute;
-      width: 3px;
-      height: 14px;
-      border-radius: 999px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,124,186,0.95));
-      box-shadow: 0 0 10px rgba(255, 143, 196, 0.46);
-      will-change: transform, opacity;
-      pointer-events: none;
-    }
-
-    .envelope-stage {
-      position: absolute;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      pointer-events: auto;
-      opacity: 0;
-      transform: translateY(14px);
-      transition: opacity 0.8s var(--ease-soft), transform 0.8s var(--ease-soft);
-    }
-
-    .envelope-ui {
-      position: relative;
-      width: min(86vw, 480px);
-      display: grid;
-      place-items: center;
-      pointer-events: auto;
-      perspective: 1400px;
-    }
-
-    .pull-hint {
-      position: absolute;
-      top: -44px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      pointer-events: none;
-      color: rgba(255,255,255,0.93);
-      font: 700 clamp(16px, 2vw, 20px)/1 Inter, -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
-      letter-spacing: 0.02em;
-      text-shadow: 0 10px 20px rgba(0,0,0,0.38);
-    }
-
-    .pull-hint span {
-      opacity: 0.96;
-    }
-
-    .pull-arrow {
-      position: relative;
-      width: 64px;
-      height: 34px;
-      opacity: 0.9;
-      animation: hintFloat 1.6s ease-in-out infinite;
-    }
-
-    .pull-arrow::before {
-      content: "";
-      position: absolute;
-      left: 50%;
-      top: 0;
-      width: 2px;
-      height: 22px;
-      transform: translateX(-50%);
-      background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.15));
-      border-radius: 999px;
-    }
-
-    .pull-arrow::after {
-      content: "";
-      position: absolute;
-      left: 50%;
-      bottom: 3px;
-      width: 14px;
-      height: 14px;
-      transform: translateX(-50%) rotate(45deg);
-      border-left: 2px solid rgba(255,255,255,0.9);
-      border-bottom: 2px solid rgba(255,255,255,0.9);
-      border-radius: 2px;
-    }
-
-    @keyframes hintFloat {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-6px); }
-    }
-
-    .envelope-shell {
-      position: relative;
-      width: min(80vw, 420px);
-      height: min(50vw, 260px);
-      max-height: 260px;
-      transform: translateY(8px);
-      transform-style: preserve-3d;
-      filter: drop-shadow(0 22px 34px rgba(0,0,0,0.28));
-      touch-action: none;
-      cursor: default;
-    }
-
-    .envelope-shadow {
-      position: absolute;
-      inset: 16px 12px -18px 12px;
-      border-radius: 999px;
-      background: radial-gradient(circle at 50% 50%, rgba(0,0,0,0.28), transparent 70%);
-      filter: blur(18px);
-      transform: translateY(34px) scaleX(0.96);
-      opacity: 0.55;
-      z-index: 0;
-    }
-
-    .envelope-back {
-      position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(145deg, rgba(255,255,255,0.26), rgba(255,255,255,0) 26%),
-        linear-gradient(180deg, #f3d4aa 0%, #e7bf90 46%, #d7aa78 100%);
-      border-radius: 26px;
-      overflow: hidden;
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.34),
-        inset 0 -18px 26px rgba(145, 87, 30, 0.10);
-      z-index: 1;
-    }
-
-    .envelope-back::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(135deg, transparent 49.45%, rgba(146, 95, 43, 0.28) 50%, transparent 50.55%),
-        linear-gradient(225deg, transparent 49.45%, rgba(255,255,255,0.14) 50%, transparent 50.55%);
-      opacity: 0.65;
-      mix-blend-mode: multiply;
-      pointer-events: none;
-    }
-
-    .envelope-back::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        repeating-linear-gradient(0deg, rgba(255,255,255,0.04) 0 1px, transparent 1px 5px),
-        repeating-linear-gradient(90deg, rgba(255,255,255,0.035) 0 1px, transparent 1px 7px);
-      opacity: 0.45;
-      mix-blend-mode: soft-light;
-      pointer-events: none;
-    }
-
-    .envelope-inner {
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: 66%;
-      background:
-        linear-gradient(180deg, rgba(207, 159, 104, 0.14) 0%, rgba(156, 102, 49, 0.12) 100%),
-        linear-gradient(180deg, #d8ab79 0%, #c79360 100%);
-      clip-path: polygon(0 14%, 50% 60%, 100% 14%, 100% 100%, 0 100%);
-      border-radius: 0 0 24px 24px;
-      opacity: 0.92;
-      z-index: 2;
-      pointer-events: none;
-    }
-
-    .paper {
-      position: absolute;
-      left: 7%;
-      width: 86%;
-      height: 82%;
-      bottom: 8%;
-      border-radius: 18px;
-      background:
-        radial-gradient(700px 240px at 50% 0%, rgba(255,255,255,0.35), transparent 56%),
-        linear-gradient(180deg, rgba(255,255,255,0.24), rgba(255,255,255,0.06)),
-        linear-gradient(180deg, #f9ecd4 0%, #f0d8b2 100%);
-      border: 1px solid rgba(92, 59, 24, 0.09);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.40),
-        0 16px 28px rgba(0,0,0,0.11);
-      transform: translateY(42%) translateZ(0) rotate(0deg);
-      z-index: 3;
-      pointer-events: auto;
-      will-change: transform;
-      overflow: hidden;
-      touch-action: none;
-    }
-
-    .paper::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(800px 220px at 50% 0%, rgba(255,255,255,0.36), transparent 58%),
-        repeating-linear-gradient(90deg, rgba(255,255,255,0.08) 0 1px, transparent 1px 8px),
-        repeating-linear-gradient(0deg, rgba(255,255,255,0.04) 0 1px, transparent 1px 6px);
-      opacity: 0.7;
-      pointer-events: none;
-      mix-blend-mode: soft-light;
-    }
-
-    .paper::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.02) 100%);
-      pointer-events: none;
-    }
-
-    .paper-handle {
-      position: absolute;
-      left: 50%;
-      top: 10px;
-      transform: translateX(-50%);
-      width: 56px;
-      height: 6px;
-      border-radius: 999px;
-      background: rgba(73, 46, 25, 0.18);
-      opacity: 0.7;
-    }
-
-    .paper-content {
-      position: absolute;
-      inset: 34px 24px 22px;
-      overflow: hidden;
-      color: var(--ink);
-      font-family: Inter, -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
-      font-size: clamp(18px, 2.9vw, 30px);
-      line-height: 1.48;
-      font-weight: 600;
-      letter-spacing: -0.02em;
-      transform: translateY(6px);
-      opacity: 0.97;
-      user-select: none;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 12px;
-      text-align: left;
-    }
-
-    .paper-title {
-      font-size: 0.86em;
-      font-weight: 800;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: rgba(47, 33, 24, 0.70);
-    }
-
-    .paper-body {
-      font-size: 1em;
-      font-weight: 600;
-      line-height: 1.52;
-      color: rgba(47, 33, 24, 0.94);
-    }
-
-    .paper-grip {
-      position: absolute;
-      right: 14px;
-      top: 14px;
-      color: rgba(47, 33, 24, 0.42);
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.02em;
-      opacity: 0;
-      transition: opacity 0.45s ease;
-    }
-
-    .paper-ready .paper-grip {
-      opacity: 1;
-    }
-
-    .envelope-front {
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: 66%;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0) 24%),
-        linear-gradient(180deg, #e7bf90 0%, #d7aa78 100%);
-      clip-path: polygon(0 0, 50% 56%, 100% 0, 100% 100%, 0 100%);
-      border-radius: 0 0 24px 24px;
-      opacity: 0.98;
-      z-index: 4;
-      pointer-events: none;
-    }
-
-    .envelope-front::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(135deg, transparent 49.45%, rgba(0,0,0,0.12) 50%, transparent 50.55%),
-        linear-gradient(225deg, transparent 49.45%, rgba(255,255,255,0.10) 50%, transparent 50.55%);
-      opacity: 0.55;
-      pointer-events: none;
-      mix-blend-mode: multiply;
-    }
-
-    .envelope-flap {
-      position: absolute;
-      inset: 0;
-      clip-path: polygon(0 0, 50% 50%, 100% 0, 100% 14%, 50% 64%, 0 14%);
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0) 28%),
-        linear-gradient(180deg, #efd0a7 0%, #c99767 100%);
-      transform-origin: 50% 0%;
-      transform: rotateX(0deg) translateY(0);
-      backface-visibility: hidden;
-      transition: transform 0.92s var(--ease-soft), filter 0.92s var(--ease-soft);
-      z-index: 6;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.35);
-      cursor: pointer;
-    }
-
-    .envelope-flap.open {
-      transform: rotateX(-174deg) translateY(-2px);
-      filter: brightness(0.98);
-      cursor: default;
-    }
-
-    .envelope-seal {
-      position: absolute;
-      left: 50%;
-      top: 46%;
-      width: 34px;
-      height: 34px;
-      transform: translate(-50%, -50%);
-      border-radius: 50%;
-      background: radial-gradient(circle at 35% 35%, #ffd9ea 0%, #ff8bc9 38%, #eb5c9f 100%);
-      box-shadow: 0 0 0 6px rgba(255, 138, 203, 0.08), 0 10px 22px rgba(0, 0, 0, 0.14);
-      z-index: 7;
-      transition: opacity 0.3s ease, transform 0.8s var(--ease-soft);
-    }
-
-    .envelope-seal.gone {
-      opacity: 0;
-      transform: translate(-50%, -50%) scale(0.25);
-    }
-
-    .envelope-shell.open .paper {
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.40),
-        0 18px 30px rgba(0,0,0,0.13);
-    }
-
-    .paper.grabbing {
-      cursor: grabbing;
-    }
-
-    .paper-floating {
-      position: fixed;
-      margin: 0;
-      transform-origin: top left;
-      z-index: 30;
-      pointer-events: none;
-      box-shadow:
-        0 24px 70px rgba(0,0,0,0.28),
-        0 6px 18px rgba(0,0,0,0.12);
-    }
-
-    .paper-center {
-      border-radius: 24px;
-      box-shadow:
-        0 26px 70px rgba(0,0,0,0.32),
-        0 8px 18px rgba(0,0,0,0.12);
-    }
-
-    .soft-glow {
-      position: absolute;
-      inset: -24px;
-      border-radius: 42px;
-      background: radial-gradient(circle at 50% 50%, rgba(255, 148, 206, 0.13), transparent 55%);
-      filter: blur(18px);
-      pointer-events: none;
-    }
-
-    .music-btn {
-      position: fixed;
-      right: 16px;
-      bottom: 16px;
-      z-index: 20;
-      pointer-events: auto;
-      appearance: none;
-      border: 0;
-      padding: 12px 16px;
-      border-radius: 999px;
-      color: rgba(255,255,255,0.94);
-      background: rgba(16, 16, 20, 0.42);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      box-shadow: 0 10px 24px rgba(0,0,0,0.22);
-      font: 600 14px/1 Inter, -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
-      letter-spacing: 0.01em;
-      cursor: pointer;
-      touch-action: manipulation;
-    }
-
-    .music-btn:active { transform: scale(0.98); }
-
-    .tiny-note {
-      position: fixed;
-      left: 16px;
-      bottom: 18px;
-      z-index: 20;
-      color: rgba(255,255,255,0.56);
-      font: 500 12px/1.4 Inter, -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
-      pointer-events: none;
-    }
-
-    .fade-out {
-      opacity: 0;
-      transform: scale(0.96);
-      transition: opacity 0.55s ease, transform 0.55s ease;
-    }
-  </style>
-</head>
-<body>
-  <canvas id="bg"></canvas>
-  <div class="particles" id="particles"></div>
-
-  <div class="stage">
-    <div class="center-stack" id="centerStack">
-      <div class="soft-glow"></div>
-      <div class="text-wrap" id="textWrap"></div>
-      <div class="envelope-stage" id="envelopeStage"></div>
-    </div>
-  </div>
-
-  <button class="music-btn" id="musicBtn">Включить музыку</button>
-  <div class="tiny-note">Для музыки добавь файл music.mp3 рядом с index.html</div>
-
-  <audio id="music" loop preload="auto">
-    <source src="music.mp3" type="audio/mpeg" />
-  </audio>
-
-  <script>
-    const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const canvas = document.getElementById('bg');
-    const ctx = canvas.getContext('2d');
-    const particles = document.getElementById('particles');
-    const textWrap = document.getElementById('textWrap');
-    const envelopeStage = document.getElementById('envelopeStage');
-    const music = document.getElementById('music');
-    const musicBtn = document.getElementById('musicBtn');
-
-    let W = 0, H = 0, dpr = 1;
-    const streaks = [];
-    const stars = [];
-
-    function resize() {
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
-      W = window.innerWidth;
-      H = window.innerHeight;
-      canvas.width = Math.floor(W * dpr);
-      canvas.height = Math.floor(H * dpr);
-      canvas.style.width = W + 'px';
-      canvas.style.height = H + 'px';
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-      if (!stars.length) {
-        for (let i = 0; i < 120; i++) {
-          stars.push({
-            x: Math.random() * W,
-            y: Math.random() * H,
-            r: Math.random() * 1.25 + 0.2,
-            a: Math.random() * 0.55 + 0.15,
-            tw: Math.random() * 0.02 + 0.005
-          });
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>...</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,700;0,800;1,700;1,800&family=Playfair+Display:ital,wght@0,600;1,600;1,700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --bg: #050507;
+        --pink: #ff8acb;
+        --pink-2: #ffb3df;
+        --rose: #ffd1ea;
+        --paper: #f2d9b4;
+        --paper-dark: #d7b484;
+        --ink: #2f2118;
+        --shadow: rgba(0, 0, 0, 0.38);
+        --ease-out: cubic-bezier(0.18, 0.88, 0.22, 1);
+        --ease-soft: cubic-bezier(0.2, 0.8, 0.2, 1);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+        background: radial-gradient(
+          1200px 800px at 50% 40%,
+          #120812 0%,
+          #070709 45%,
+          #020203 100%
+        );
+        font-family: Inter, -apple-system, BlinkMacSystemFont, "San Francisco",
+          "Segoe UI", system-ui, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: geometricPrecision;
+        user-select: none;
+        -webkit-user-select: none;
+        overscroll-behavior: none;
+        touch-action: none;
+      }
+
+      canvas#bg {
+        position: fixed;
+        inset: 0;
+        width: 100vw;
+        height: 100vh;
+      }
+
+      .stage {
+        position: fixed;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        pointer-events: none;
+      }
+
+      .center-stack {
+        position: relative;
+        width: min(92vw, 620px);
+        height: min(72vh, 640px);
+        display: grid;
+        place-items: center;
+      }
+
+      .text-wrap {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        text-align: center;
+        pointer-events: none;
+      }
+
+      .word {
+        opacity: 0;
+        transform: translateY(18px) scale(0.985);
+        transition: opacity 1.35s var(--ease-soft),
+          transform 1.35s var(--ease-soft);
+        color: #fff7fb;
+        font-family: Inter, -apple-system, BlinkMacSystemFont, "San Francisco",
+          system-ui, sans-serif;
+        font-style: italic;
+        font-weight: 800;
+        letter-spacing: 0.01em;
+        line-height: 1.3;
+        font-size: clamp(28px, 4.4vw, 52px);
+        text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.95),
+          1px -1px 0 rgba(0, 0, 0, 0.95), -1px 1px 0 rgba(0, 0, 0, 0.95),
+          1px 1px 0 rgba(0, 0, 0, 0.95), 0 0 16px rgba(0, 0, 0, 0.72),
+          0 0 28px rgba(0, 0, 0, 0.35);
+        filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.8));
+        max-width: 88vw;
+      }
+
+      .word.show {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+
+      .heart-shell {
+        position: relative;
+        width: min(24vw, 118px);
+        aspect-ratio: 1;
+        pointer-events: auto;
+        cursor: pointer;
+        touch-action: manipulation;
+        filter: drop-shadow(0 18px 26px rgba(255, 112, 175, 0.16));
+        transform: translateZ(0);
+        display: grid;
+        place-items: center;
+        outline: none;
+      }
+
+      .heart-shell:focus-visible {
+        outline: 2px solid rgba(255, 255, 255, 0.45);
+        outline-offset: 6px;
+        border-radius: 22px;
+      }
+
+      .heart {
+        position: absolute;
+        inset: 18% 18% 18% 18%;
+        transform: rotate(45deg);
+        background: linear-gradient(
+          145deg,
+          #ff7bbd 0%,
+          #ffa8d4 44%,
+          #ff7fbe 100%
+        );
+        border-radius: 18% 18% 10% 10%;
+        box-shadow: inset -10px -12px 18px rgba(167, 18, 92, 0.14),
+          inset 8px 10px 18px rgba(255, 255, 255, 0.2);
+        transition: transform 0.85s var(--ease-soft), opacity 0.45s ease;
+        animation: beat 1.7s var(--ease-soft) infinite;
+        will-change: transform, opacity;
+        pointer-events: auto;
+      }
+
+      .heart::before,
+      .heart::after {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: inherit;
+        box-shadow: inherit;
+      }
+
+      .heart::before {
+        top: -50%;
+        left: 0;
+      }
+
+      .heart::after {
+        left: -50%;
+        top: 0;
+        transform: translateZ(0);
+      }
+
+      @keyframes beat {
+        0%,
+        100% {
+          transform: rotate(45deg) scale(1);
+        }
+        50% {
+          transform: rotate(45deg) scale(1.08);
         }
       }
-    }
 
-    window.addEventListener('resize', resize, { passive: true });
-    resize();
-
-    function spawnStreak() {
-      if (streaks.length > 70) return;
-      streaks.push({
-        x: Math.random() * W,
-        y: -40 - Math.random() * H * 0.2,
-        vx: -0.25 - Math.random() * 0.12,
-        vy: 3.8 + Math.random() * 3.4,
-        len: 30 + Math.random() * 40,
-        w: 1 + Math.random() * 1.8,
-        life: 1,
-        decay: 0.008 + Math.random() * 0.008
-      });
-    }
-
-    function drawBackground() {
-      ctx.clearRect(0, 0, W, H);
-      ctx.fillStyle = 'rgba(2, 2, 4, 0.16)';
-      ctx.fillRect(0, 0, W, H);
-
-      const grad = ctx.createRadialGradient(W * 0.5, H * 0.38, 20, W * 0.5, H * 0.38, Math.max(W, H) * 0.6);
-      grad.addColorStop(0, 'rgba(255, 134, 196, 0.06)');
-      grad.addColorStop(0.55, 'rgba(255, 86, 170, 0.025)');
-      grad.addColorStop(1, 'rgba(255, 86, 170, 0)');
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, W, H);
-
-      for (const s of stars) {
-        s.x += 0.01;
-        s.a += Math.sin(Date.now() * s.tw + s.x) * 0.002;
-        if (s.x > W + 4) s.x = -4;
-        ctx.beginPath();
-        ctx.fillStyle = `rgba(255, 206, 230, ${Math.max(0.12, Math.min(0.75, s.a))})`;
-        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-        ctx.fill();
+      .hint {
+        margin-top: 18px;
+        font-size: clamp(17px, 2.2vw, 22px);
+        font-style: italic;
+        font-weight: 700;
+        color: rgba(255, 248, 252, 0.92);
+        text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.95),
+          1px -1px 0 rgba(0, 0, 0, 0.95), -1px 1px 0 rgba(0, 0, 0, 0.95),
+          1px 1px 0 rgba(0, 0, 0, 0.95);
+        opacity: 0;
+        transform: translateY(12px);
+        transition: opacity 1s var(--ease-soft), transform 1s var(--ease-soft);
       }
 
-      if (!prefersReducedMotion && Math.random() < 0.18) spawnStreak();
-
-      for (let i = streaks.length - 1; i >= 0; i--) {
-        const st = streaks[i];
-        st.x += st.vx;
-        st.y += st.vy;
-        st.life -= st.decay;
-        const alpha = Math.max(0, st.life);
-
-        const x2 = st.x - st.vx * st.len;
-        const y2 = st.y - st.vy * st.len;
-        const g = ctx.createLinearGradient(st.x, st.y, x2, y2);
-        g.addColorStop(0, `rgba(255, 194, 227, ${0.85 * alpha})`);
-        g.addColorStop(1, 'rgba(255, 124, 186, 0)');
-
-        ctx.strokeStyle = g;
-        ctx.lineWidth = st.w;
-        ctx.lineCap = 'round';
-        ctx.beginPath();
-        ctx.moveTo(st.x, st.y);
-        ctx.lineTo(x2, y2);
-        ctx.stroke();
-
-        if (st.life <= 0 || st.y > H + 80 || st.x < -120) streaks.splice(i, 1);
+      .hint.show {
+        opacity: 0.86;
+        transform: translateY(0);
       }
 
-      requestAnimationFrame(drawBackground);
-    }
-    drawBackground();
-
-    const scenes = [
-      '1..',
-      '2..',
-      '3..',
-      'поздравляю тебя, моя любовь,',
-      'с 7 месяцами отношений'
-    ];
-
-    function delay(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    async function showTextSequence() {
-      for (const line of scenes) {
-        textWrap.innerHTML = '';
-        const el = document.createElement('div');
-        el.className = 'word';
-        el.textContent = line;
-        textWrap.appendChild(el);
-        requestAnimationFrame(() => el.classList.add('show'));
-        await delay(line.includes('поздравляю') ? 2400 : 1400);
-      }
-      await delay(250);
-      showHeart();
-    }
-
-    function makeParticleBurst(x, y, count, baseSpeed, sizeMin, sizeMax, spreadMs, type = 'dot') {
-      const frag = document.createDocumentFragment();
-      const created = [];
-
-      for (let i = 0; i < count; i++) {
-        const node = document.createElement('div');
-        node.className = type === 'spark' ? 'spark' : 'particle';
-        const angle = Math.random() * Math.PI * 2;
-        const dist = 110 + Math.random() * 120;
-        const dx = Math.cos(angle) * dist * (0.45 + Math.random() * 0.8);
-        const dy = Math.sin(angle) * dist * (0.45 + Math.random() * 0.8);
-        const size = sizeMin + Math.random() * (sizeMax - sizeMin);
-
-        node.style.left = x + 'px';
-        node.style.top = y + 'px';
-        node.style.width = size + 'px';
-        node.style.height = (type === 'spark' ? size * 2.8 : size) + 'px';
-        node.style.opacity = '1';
-        node.style.transform = 'translate(-50%, -50%) translate(0px, 0px) scale(1)';
-        frag.appendChild(node);
-        created.push({ node, dx, dy });
+      .dot {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle at 35% 35%,
+          #ffe5f2 0%,
+          #ff9acb 35%,
+          #ff78ba 100%
+        );
+        box-shadow: 0 0 0 8px rgba(255, 124, 186, 0.08),
+          0 0 24px rgba(255, 123, 184, 0.32);
+        animation: pulse 1.8s var(--ease-soft) infinite;
+        pointer-events: auto;
+        cursor: pointer;
+        will-change: transform;
       }
 
-      particles.appendChild(frag);
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.16);
+        }
+      }
 
-      created.forEach((p, idx) => {
-        const arc = Math.random() * 22;
-        p.node.animate([
-          { transform: 'translate(-50%, -50%) translate(0px, 0px) scale(1)', opacity: 1 },
-          { transform: `translate(-50%, -50%) translate(${p.dx * 0.55}px, ${p.dy * 0.55 - arc}px) scale(0.95)`, opacity: 1, offset: 0.35 },
-          { transform: `translate(-50%, -50%) translate(${p.dx}px, ${p.dy}px) scale(0.15)`, opacity: 0 }
-        ], {
-          duration: spreadMs + Math.random() * 280,
-          easing: 'cubic-bezier(0.12, 0.82, 0.18, 1)',
-          delay: idx * 2,
-          fill: 'forwards'
+      .arrow-line {
+        position: absolute;
+        width: 100px;
+        height: 2px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.82),
+          transparent
+        );
+        transform: translate(0, 0) rotate(20deg);
+        opacity: 0.85;
+        filter: blur(0.1px);
+        animation: arrowFloat 1.8s ease-in-out infinite;
+      }
+
+      .arrow-tip {
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-right: 2px solid rgba(255, 255, 255, 0.85);
+        border-top: 2px solid rgba(255, 255, 255, 0.85);
+        transform: rotate(45deg);
+        left: 82px;
+        top: -6px;
+      }
+
+      @keyframes arrowFloat {
+        0%,
+        100% {
+          transform: translateY(0) rotate(20deg);
+        }
+        50% {
+          transform: translateY(-8px) rotate(20deg);
+        }
+      }
+
+      .particles {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        overflow: hidden;
+      }
+
+      .particle {
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: linear-gradient(180deg, #ffd7ea, #ff87c8);
+        box-shadow: 0 0 10px rgba(255, 143, 196, 0.45);
+        will-change: transform, opacity;
+      }
+
+      .spark {
+        position: absolute;
+        width: 3px;
+        height: 14px;
+        border-radius: 999px;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.95),
+          rgba(255, 124, 186, 0.95)
+        );
+        box-shadow: 0 0 10px rgba(255, 143, 196, 0.46);
+        will-change: transform, opacity;
+      }
+
+      .envelope-stage {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        pointer-events: auto;
+      }
+
+      .envelope-shell {
+        position: relative;
+        width: min(80vw, 420px);
+        height: min(50vw, 260px);
+        max-height: 260px;
+        transform: translateY(8px);
+        filter: drop-shadow(0 22px 34px rgba(0, 0, 0, 0.28));
+        will-change: transform, opacity;
+      }
+
+      .envelope-back {
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.13), transparent 30%),
+          linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 48%),
+          linear-gradient(180deg, #f1cfa4 0%, #dfb68b 100%);
+        border-radius: 26px;
+        overflow: hidden;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3),
+          inset 0 -18px 24px rgba(145, 87, 30, 0.08);
+        z-index: 1;
+      }
+
+      .envelope-back::before,
+      .envelope-back::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          135deg,
+          transparent 49.5%,
+          rgba(146, 95, 43, 0.35) 50%,
+          transparent 50.5%
+        );
+        opacity: 0.42;
+        mix-blend-mode: multiply;
+        pointer-events: none;
+      }
+
+      .envelope-front {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 64%;
+        background: linear-gradient(180deg, #e7bf90 0%, #d9ab79 100%);
+        clip-path: polygon(0 0, 50% 56%, 100% 0, 100% 100%, 0 100%);
+        border-radius: 0 0 24px 24px;
+        opacity: 0.98;
+        pointer-events: none;
+        z-index: 3;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      }
+
+      .envelope-flap {
+        position: absolute;
+        inset: 0;
+        clip-path: polygon(0 0, 50% 50%, 100% 0, 100% 14%, 50% 64%, 0 14%);
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.14), transparent 32%),
+          linear-gradient(180deg, #eac59a 0%, #c89b69 100%);
+        transform-origin: 50% 14%;
+        transform: rotateX(0deg) translateY(0);
+        transition: transform 0.95s var(--ease-soft),
+          filter 0.95s var(--ease-soft), opacity 0.35s ease;
+        z-index: 4;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+        cursor: pointer;
+      }
+
+      .envelope-flap.open {
+        transform: rotateX(180deg) translateY(-3px);
+        filter: brightness(0.98);
+        cursor: default;
+      }
+
+      .envelope-seal {
+        position: absolute;
+        left: 50%;
+        top: 46%;
+        width: 34px;
+        height: 34px;
+        transform: translate(-50%, -50%);
+        border-radius: 50%;
+        background: radial-gradient(
+          circle at 35% 35%,
+          #ffd9ea 0%,
+          #ff8bc9 38%,
+          #eb5c9f 100%
+        );
+        box-shadow: 0 0 0 6px rgba(255, 138, 203, 0.08),
+          0 10px 22px rgba(0, 0, 0, 0.14);
+        z-index: 5;
+        transition: opacity 0.3s ease, transform 0.8s var(--ease-soft);
+      }
+
+      .envelope-seal.gone {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.25);
+      }
+
+      .paper {
+        position: absolute;
+        left: 7%;
+        width: 86%;
+        height: 82%;
+        bottom: 8%;
+        border-radius: 18px;
+        background:
+          linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.28),
+            rgba(255, 255, 255, 0.06)
+          ),
+          linear-gradient(180deg, #f7e6c9 0%, #eed3aa 100%);
+        border: 1px solid rgba(92, 59, 24, 0.09);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.36),
+          0 14px 24px rgba(0, 0, 0, 0.09);
+        transform: translateY(42%) translateZ(0);
+        z-index: 2;
+        touch-action: none;
+        pointer-events: auto;
+        will-change: transform, opacity;
+        overflow: hidden;
+      }
+
+      .paper::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          800px 220px at 50% 0%,
+          rgba(255, 255, 255, 0.32),
+          transparent 60%
+        );
+        pointer-events: none;
+      }
+
+      .paper::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.05) 0,
+            rgba(255, 255, 255, 0) 18%,
+            rgba(255, 255, 255, 0.03) 38%,
+            rgba(255, 255, 255, 0) 62%,
+            rgba(255, 255, 255, 0.05) 100%
+          ),
+          repeating-linear-gradient(
+            180deg,
+            rgba(111, 74, 30, 0.018) 0px,
+            rgba(111, 74, 30, 0.018) 1px,
+            transparent 1px,
+            transparent 8px
+          );
+        opacity: 0.5;
+        pointer-events: none;
+      }
+
+      .paper-handle {
+        position: absolute;
+        left: 50%;
+        top: 10px;
+        transform: translateX(-50%);
+        width: 56px;
+        height: 6px;
+        border-radius: 999px;
+        background: rgba(73, 46, 25, 0.18);
+        opacity: 0.7;
+      }
+
+      .paper-content {
+        position: absolute;
+        inset: 34px 24px 20px;
+        overflow: hidden;
+        color: var(--ink);
+        font-family: "Playfair Display", Georgia, serif;
+        font-size: clamp(20px, 3vw, 30px);
+        line-height: 1.45;
+        font-weight: 600;
+        transform: translateY(6px);
+        opacity: 0.96;
+        user-select: none;
+        text-shadow: 0 1px 0 rgba(255, 255, 255, 0.25);
+      }
+
+      .paper-content .placeholder {
+        color: rgba(47, 33, 24, 0.64);
+        font-style: italic;
+      }
+
+      .paper-grip {
+        position: absolute;
+        right: 14px;
+        top: 14px;
+        color: rgba(47, 33, 24, 0.4);
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        opacity: 0;
+        transition: opacity 0.45s ease;
+      }
+
+      .paper-ready .paper-grip {
+        opacity: 1;
+      }
+
+      .pull-label {
+        position: absolute;
+        top: -72px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: grid;
+        justify-items: center;
+        gap: 8px;
+        pointer-events: none;
+        z-index: 20;
+      }
+
+      .pull-label .pull-text {
+        color: rgba(255, 248, 252, 0.94);
+        font: 800 clamp(18px, 2.6vw, 24px) / 1.1 Inter,
+          -apple-system, BlinkMacSystemFont, "San Francisco", system-ui,
+          sans-serif;
+        letter-spacing: 0.01em;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+      }
+
+      .pull-label .pull-arrow {
+        width: 56px;
+        height: 38px;
+        position: relative;
+        filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.28));
+        animation: pullArrow 1.7s ease-in-out infinite;
+      }
+
+      .pull-label .pull-arrow::before {
+        content: "";
+        position: absolute;
+        left: 26px;
+        top: 5px;
+        width: 3px;
+        height: 20px;
+        border-radius: 999px;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.92),
+          rgba(255, 255, 255, 0.55)
+        );
+      }
+
+      .pull-label .pull-arrow::after {
+        content: "";
+        position: absolute;
+        left: 20px;
+        top: 18px;
+        width: 15px;
+        height: 15px;
+        border-left: 3px solid rgba(255, 255, 255, 0.92);
+        border-bottom: 3px solid rgba(255, 255, 255, 0.92);
+        transform: rotate(-45deg);
+        border-radius: 2px;
+      }
+
+      @keyframes pullArrow {
+        0%,
+        100% {
+          transform: translateY(0);
+          opacity: 0.9;
+        }
+        50% {
+          transform: translateY(8px);
+          opacity: 1;
+        }
+      }
+
+      .soft-glow {
+        position: absolute;
+        inset: -24px;
+        border-radius: 42px;
+        background: radial-gradient(
+          circle at 50% 50%,
+          rgba(255, 148, 206, 0.13),
+          transparent 55%
+        );
+        filter: blur(18px);
+        pointer-events: none;
+      }
+
+      .music-btn {
+        position: fixed;
+        right: 16px;
+        bottom: 16px;
+        z-index: 20;
+        pointer-events: auto;
+        appearance: none;
+        border: 0;
+        padding: 12px 16px;
+        border-radius: 999px;
+        color: rgba(255, 255, 255, 0.94);
+        background: rgba(16, 16, 20, 0.42);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+        font: 600 14px/1 Inter, -apple-system, BlinkMacSystemFont, "San Francisco",
+          system-ui, sans-serif;
+        letter-spacing: 0.01em;
+        cursor: pointer;
+      }
+
+      .music-btn:active {
+        transform: scale(0.98);
+      }
+
+      .tiny-note {
+        position: fixed;
+        left: 16px;
+        bottom: 18px;
+        z-index: 20;
+        color: rgba(255, 255, 255, 0.56);
+        font: 500 12px/1.4 Inter, -apple-system, BlinkMacSystemFont, "San Francisco",
+          system-ui, sans-serif;
+        pointer-events: none;
+      }
+
+      .fade-out {
+        opacity: 0;
+        transform: scale(0.98);
+        transition: opacity 0.55s ease, transform 0.55s ease;
+      }
+
+      .floating-paper {
+        position: fixed !important;
+        left: 0;
+        top: 0;
+        margin: 0 !important;
+        z-index: 1000;
+        pointer-events: none;
+        will-change: left, top, transform, opacity;
+      }
+
+      .floating-paper .paper-content {
+        inset: 30px 26px 20px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <canvas id="bg"></canvas>
+
+    <div class="particles" id="particles"></div>
+
+    <div class="stage">
+      <div class="center-stack" id="centerStack">
+        <div class="soft-glow"></div>
+        <div class="text-wrap" id="textWrap"></div>
+        <div
+          class="envelope-stage"
+          id="envelopeStage"
+          style="
+            opacity: 0;
+            transform: translateY(14px);
+            transition: opacity 0.8s var(--ease-soft),
+              transform 0.8s var(--ease-soft);
+          "
+        ></div>
+      </div>
+    </div>
+
+    <button class="music-btn" id="musicBtn">Включить музыку</button>
+    <div class="tiny-note">Для музыки добавь файл music.mp3 рядом с index.html</div>
+
+    <audio id="music" loop preload="auto">
+      <source src="music.mp3" type="audio/mpeg" />
+    </audio>
+
+    <script>
+      const prefersReducedMotion =
+        window.matchMedia &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      const canvas = document.getElementById("bg");
+      const ctx = canvas.getContext("2d");
+      const particles = document.getElementById("particles");
+      const textWrap = document.getElementById("textWrap");
+      const envelopeStage = document.getElementById("envelopeStage");
+      const music = document.getElementById("music");
+      const musicBtn = document.getElementById("musicBtn");
+
+      let W = 0,
+        H = 0,
+        dpr = 1;
+
+      const streaks = [];
+      const stars = [];
+
+      function resize() {
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        W = window.innerWidth;
+        H = window.innerHeight;
+        canvas.width = Math.floor(W * dpr);
+        canvas.height = Math.floor(H * dpr);
+        canvas.style.width = W + "px";
+        canvas.style.height = H + "px";
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        if (!stars.length) {
+          for (let i = 0; i < 120; i++) {
+            stars.push({
+              x: Math.random() * W,
+              y: Math.random() * H,
+              r: Math.random() * 1.25 + 0.2,
+              a: Math.random() * 0.55 + 0.15,
+              tw: Math.random() * 0.02 + 0.005,
+            });
+          }
+        }
+      }
+
+      window.addEventListener("resize", resize, { passive: true });
+      resize();
+
+      function spawnStreak() {
+        if (streaks.length > 70) return;
+        streaks.push({
+          x: Math.random() * W,
+          y: -40 - Math.random() * H * 0.2,
+          vx: -0.25 - Math.random() * 0.12,
+          vy: 3.8 + Math.random() * 3.4,
+          len: 30 + Math.random() * 40,
+          w: 1 + Math.random() * 1.8,
+          life: 1,
+          decay: 0.008 + Math.random() * 0.008,
         });
-        setTimeout(() => p.node.remove(), spreadMs + 420);
-      });
-    }
-
-    function makeSwirlToCenter(originX, originY, onDone) {
-      const count = 34;
-      for (let i = 0; i < count; i++) {
-        const node = document.createElement('div');
-        node.className = 'particle';
-        const startX = originX + (Math.random() - 0.5) * 38;
-        const startY = originY + (Math.random() - 0.5) * 38;
-        const endX = window.innerWidth / 2 + (Math.random() - 0.5) * 12;
-        const endY = window.innerHeight / 2 + (Math.random() - 0.5) * 12;
-        const controlX = (startX + endX) / 2 + (Math.random() - 0.5) * 180;
-        const controlY = (startY + endY) / 2 + (Math.random() - 0.5) * 180;
-        node.style.left = startX + 'px';
-        node.style.top = startY + 'px';
-        particles.appendChild(node);
-
-        const duration = 1100 + Math.random() * 250;
-        const keyframes = [
-          { transform: 'translate(-50%, -50%) scale(1)', opacity: 1 },
-          { transform: `translate(calc(-50% + ${controlX - startX}px), calc(-50% + ${controlY - startY}px)) scale(1.03)`, opacity: 0.95, offset: 0.58 },
-          { transform: `translate(calc(-50% + ${endX - startX}px), calc(-50% + ${endY - startY}px)) scale(0.7)`, opacity: 0.8 },
-          { transform: `translate(calc(-50% + ${endX - startX}px), calc(-50% + ${endY - startY}px)) scale(0.18)`, opacity: 0 }
-        ];
-        node.animate(keyframes, { duration, easing: 'cubic-bezier(0.16, 0.84, 0.22, 1)', fill: 'forwards', delay: i * 3 });
-        setTimeout(() => node.remove(), duration + 380);
       }
-      setTimeout(onDone, 1300);
-    }
 
-    function showHeart() {
-      textWrap.innerHTML = '';
-      const holder = document.createElement('div');
-      holder.className = 'scene-block';
-      holder.innerHTML = `
-        <button class="heart-shell" type="button" aria-label="Открыть сердце">
-          <span class="heart"></span>
-        </button>
-        <div class="hint show">нажми сюда</div>
-      `;
-      textWrap.appendChild(holder);
+      function drawBackground() {
+        ctx.clearRect(0, 0, W, H);
+        ctx.fillStyle = "rgba(2, 2, 4, 0.16)";
+        ctx.fillRect(0, 0, W, H);
 
-      const shell = holder.querySelector('.heart-shell');
-      const activate = () => {
-        if (shell.dataset.used === '1') return;
-        shell.dataset.used = '1';
-        burstHeart(shell);
-      };
+        const grad = ctx.createRadialGradient(
+          W * 0.5,
+          H * 0.38,
+          20,
+          W * 0.5,
+          H * 0.38,
+          Math.max(W, H) * 0.6
+        );
+        grad.addColorStop(0, "rgba(255, 134, 196, 0.06)");
+        grad.addColorStop(0.55, "rgba(255, 86, 170, 0.025)");
+        grad.addColorStop(1, "rgba(255, 86, 170, 0)");
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, W, H);
 
-      shell.addEventListener('pointerdown', activate, { once: true });
-      shell.addEventListener('click', activate, { once: true });
-    }
+        for (const s of stars) {
+          s.x += 0.01;
+          s.a += Math.sin(Date.now() * s.tw + s.x) * 0.002;
+          if (s.x > W + 4) s.x = -4;
+          ctx.beginPath();
+          ctx.fillStyle = `rgba(255, 206, 230, ${Math.max(
+            0.12,
+            Math.min(0.75, s.a)
+          )})`;
+          ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+          ctx.fill();
+        }
 
-    function burstHeart(shell) {
-      const rect = shell.getBoundingClientRect();
-      const x = rect.left + rect.width / 2;
-      const y = rect.top + rect.height / 2;
+        if (!prefersReducedMotion) {
+          if (Math.random() < 0.18) spawnStreak();
+        }
 
-      const heart = shell.querySelector('.heart');
-      heart.style.transform = 'rotate(45deg) scale(0.9)';
-      heart.style.opacity = '0';
+        for (let i = streaks.length - 1; i >= 0; i--) {
+          const st = streaks[i];
+          st.x += st.vx;
+          st.y += st.vy;
+          st.life -= st.decay;
+          const alpha = Math.max(0, st.life);
 
-      shell.animate([
-        { transform: 'scale(1) rotate(0deg)', opacity: 1 },
-        { transform: 'scale(0.72) rotate(-6deg)', opacity: 0.85, offset: 0.5 },
-        { transform: 'scale(0.08) rotate(18deg)', opacity: 0 }
-      ], {
-        duration: 620,
-        easing: 'cubic-bezier(0.18, 0.88, 0.22, 1)',
-        fill: 'forwards'
-      });
+          const x2 = st.x - st.vx * st.len;
+          const y2 = st.y - st.vy * st.len;
+          const g = ctx.createLinearGradient(st.x, st.y, x2, y2);
+          g.addColorStop(0, `rgba(255, 194, 227, ${0.85 * alpha})`);
+          g.addColorStop(1, "rgba(255, 124, 186, 0)");
 
-      makeParticleBurst(x, y, 44, 7.5, 4, 8, 980, 'dot');
-      makeSwirlToCenter(x, y, () => {
-        showDot();
-      });
-    }
+          ctx.strokeStyle = g;
+          ctx.lineWidth = st.w;
+          ctx.lineCap = "round";
+          ctx.beginPath();
+          ctx.moveTo(st.x, st.y);
+          ctx.lineTo(x2, y2);
+          ctx.stroke();
 
-    function showDot() {
-      textWrap.innerHTML = '';
-      const wrap = document.createElement('div');
-      wrap.className = 'scene-block';
+          if (st.life <= 0 || st.y > H + 80 || st.x < -120) streaks.splice(i, 1);
+        }
 
-      const hint = document.createElement('div');
-      hint.className = 'hint show';
-      hint.textContent = 'нажми сюда';
+        requestAnimationFrame(drawBackground);
+      }
+      drawBackground();
 
-      const dot = document.createElement('div');
-      dot.className = 'dot';
+      const scenes = [
+        "1..",
+        "2..",
+        "3..",
+        "поздравляю тебя, моя любовь,",
+        "с 7 месяцами отношений",
+      ];
 
-      const arrow = document.createElement('div');
-      arrow.style.position = 'relative';
-      arrow.style.width = '110px';
-      arrow.style.height = '20px';
-      arrow.style.marginTop = '2px';
-      arrow.innerHTML = '<div class="arrow-line"><div class="arrow-tip"></div></div>';
+      function delay(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+      }
 
-      const activate = () => {
-        if (dot.dataset.used === '1') return;
-        dot.dataset.used = '1';
-        explodeDot(dot);
-      };
+      async function showTextSequence() {
+        for (const line of scenes) {
+          textWrap.innerHTML = "";
+          const el = document.createElement("div");
+          el.className = "word";
+          el.textContent = line;
+          textWrap.appendChild(el);
+          requestAnimationFrame(() => el.classList.add("show"));
+          await delay(line.includes("поздравляю") ? 2400 : 1400);
+        }
+        await delay(250);
+        showHeart();
+      }
 
-      dot.addEventListener('pointerdown', activate, { once: true });
-      dot.addEventListener('click', activate, { once: true });
+      function makeParticleBurst(
+        x,
+        y,
+        count,
+        baseSpeed,
+        sizeMin,
+        sizeMax,
+        spreadMs,
+        type = "dot"
+      ) {
+        const frag = document.createDocumentFragment();
+        const created = [];
 
-      wrap.appendChild(hint);
-      wrap.appendChild(dot);
-      wrap.appendChild(arrow);
-      textWrap.appendChild(wrap);
-    }
+        for (let i = 0; i < count; i++) {
+          const node = document.createElement("div");
+          node.className = type === "spark" ? "spark" : "particle";
 
-    function explodeDot(dot) {
-      const rect = dot.getBoundingClientRect();
-      const x = rect.left + rect.width / 2;
-      const y = rect.top + rect.height / 2;
-      dot.style.transform = 'scale(0.35)';
-      dot.style.opacity = '0';
-      makeParticleBurst(x, y, 66, 9.5, 3, 7, 1050, 'spark');
-      setTimeout(showEnvelope, 1040);
-    }
+          const angle = Math.random() * Math.PI * 2;
+          const speed = baseSpeed + Math.random() * baseSpeed * 0.7;
+          const dist = 110 + Math.random() * 120;
+          const dx = Math.cos(angle) * dist * (0.45 + Math.random() * 0.8);
+          const dy = Math.sin(angle) * dist * (0.45 + Math.random() * 0.8);
+          const size = sizeMin + Math.random() * (sizeMax - sizeMin);
 
-    function showEnvelope() {
-      textWrap.innerHTML = '';
-      envelopeStage.innerHTML = `
-        <div class="envelope-ui" id="envelopeUI">
-          <div class="pull-hint" id="pullHint">
-            <span>вытяни</span>
-            <div class="pull-arrow"></div>
-          </div>
+          node.style.left = x + "px";
+          node.style.top = y + "px";
+          node.style.width = size + "px";
+          node.style.height = (type === "spark" ? size * 2.8 : size) + "px";
+          node.style.opacity = "1";
+          node.style.transform =
+            "translate(-50%, -50%) translate(0px, 0px) scale(1)";
+          frag.appendChild(node);
+          created.push({ node, dx, dy, speed, angle });
+        }
 
+        particles.appendChild(frag);
+
+        created.forEach((p, idx) => {
+          const arc = Math.random() * 22;
+          p.node.animate(
+            [
+              {
+                transform: "translate(-50%, -50%) translate(0px, 0px) scale(1)",
+                opacity: 1,
+              },
+              {
+                transform: `translate(-50%, -50%) translate(${p.dx * 0.55}px, ${
+                  p.dy * 0.55 - arc
+                }px) scale(0.95)`,
+                opacity: 1,
+                offset: 0.35,
+              },
+              {
+                transform: `translate(-50%, -50%) translate(${p.dx}px, ${p.dy}px) scale(0.15)`,
+                opacity: 0,
+              },
+            ],
+            {
+              duration: spreadMs + Math.random() * 280,
+              easing: "cubic-bezier(0.12, 0.82, 0.18, 1)",
+              delay: idx * 2,
+              fill: "forwards",
+            }
+          );
+          setTimeout(() => p.node.remove(), spreadMs + 420);
+        });
+      }
+
+      function makeSwirlToCenter(originX, originY, onDone) {
+        const count = 34;
+        for (let i = 0; i < count; i++) {
+          const node = document.createElement("div");
+          node.className = "particle";
+          const startX = originX + (Math.random() - 0.5) * 38;
+          const startY = originY + (Math.random() - 0.5) * 38;
+          const endX = window.innerWidth / 2 + (Math.random() - 0.5) * 12;
+          const endY = window.innerHeight / 2 + (Math.random() - 0.5) * 12;
+          const controlX = (startX + endX) / 2 + (Math.random() - 0.5) * 180;
+          const controlY = (startY + endY) / 2 + (Math.random() - 0.5) * 180;
+
+          node.style.left = startX + "px";
+          node.style.top = startY + "px";
+          particles.appendChild(node);
+
+          const duration = 1100 + Math.random() * 250;
+          const keyframes = [
+            { transform: "translate(-50%, -50%) scale(1)", opacity: 1 },
+            {
+              transform: `translate(calc(-50% + ${controlX - startX}px), calc(-50% + ${controlY - startY}px)) scale(1.03)`,
+              opacity: 0.95,
+              offset: 0.58,
+            },
+            {
+              transform: `translate(calc(-50% + ${endX - startX}px), calc(-50% + ${endY - startY}px)) scale(0.7)`,
+              opacity: 0.8,
+            },
+            {
+              transform: `translate(calc(-50% + ${endX - startX}px), calc(-50% + ${endY - startY}px)) scale(0.18)`,
+              opacity: 0,
+            },
+          ];
+          node.animate(keyframes, {
+            duration,
+            easing: "cubic-bezier(0.16, 0.84, 0.22, 1)",
+            fill: "forwards",
+            delay: i * 3,
+          });
+          setTimeout(() => node.remove(), duration + 380);
+        }
+        setTimeout(onDone, 1300);
+      }
+
+      function showHeart() {
+        textWrap.innerHTML = "";
+
+        const holder = document.createElement("div");
+        holder.style.display = "grid";
+        holder.style.placeItems = "center";
+        holder.style.gap = "12px";
+        holder.style.pointerEvents = "auto";
+
+        const shell = document.createElement("div");
+        shell.className = "heart-shell";
+        shell.setAttribute("role", "button");
+        shell.setAttribute("tabindex", "0");
+        shell.setAttribute("aria-label", "Открыть сердце");
+        shell.innerHTML = '<div class="heart"></div>';
+
+        const trigger = () => {
+          if (shell.dataset.used === "1") return;
+          shell.dataset.used = "1";
+          burstHeart(shell);
+        };
+
+        shell.addEventListener("pointerdown", trigger, { once: true });
+        shell.addEventListener("click", trigger);
+        shell.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            trigger();
+          }
+        });
+
+        holder.appendChild(shell);
+        textWrap.appendChild(holder);
+      }
+
+      function burstHeart(shell) {
+        const rect = shell.getBoundingClientRect();
+        const x = rect.left + rect.width / 2;
+        const y = rect.top + rect.height / 2;
+
+        const heart = shell.querySelector(".heart");
+        heart.style.transform = "rotate(45deg) scale(0.9)";
+        heart.style.opacity = "0";
+
+        shell.animate(
+          [
+            { transform: "scale(1) rotate(0deg)", opacity: 1 },
+            { transform: "scale(0.92) rotate(-2deg)", opacity: 0.75, offset: 0.35 },
+            { transform: "scale(0.1) rotate(10deg)", opacity: 0 },
+          ],
+          {
+            duration: 520,
+            easing: "cubic-bezier(0.16, 0.84, 0.22, 1)",
+            fill: "forwards",
+          }
+        );
+
+        makeParticleBurst(x, y, 44, 7.5, 4, 8, 980, "dot");
+        makeSwirlToCenter(x, y, () => {
+          showDot();
+        });
+      }
+
+      function showDot() {
+        textWrap.innerHTML = "";
+        const wrap = document.createElement("div");
+        wrap.style.display = "grid";
+        wrap.style.placeItems = "center";
+        wrap.style.gap = "18px";
+        wrap.style.pointerEvents = "auto";
+
+        const dot = document.createElement("div");
+        dot.className = "dot";
+
+        const hint = document.createElement("div");
+        hint.className = "hint show";
+        hint.textContent = "нажми сюда";
+
+        const arrow = document.createElement("div");
+        arrow.style.position = "relative";
+        arrow.style.width = "110px";
+        arrow.style.height = "20px";
+        arrow.style.marginTop = "2px";
+        arrow.innerHTML =
+          '<div class="arrow-line"><div class="arrow-tip"></div></div>';
+
+        dot.addEventListener(
+          "pointerdown",
+          () => {
+            explodeDot(dot);
+          },
+          { once: true }
+        );
+
+        wrap.appendChild(hint);
+        wrap.appendChild(dot);
+        wrap.appendChild(arrow);
+        textWrap.appendChild(wrap);
+      }
+
+      function explodeDot(dot) {
+        const rect = dot.getBoundingClientRect();
+        const x = rect.left + rect.width / 2;
+        const y = rect.top + rect.height / 2;
+        dot.style.transform = "scale(0.35)";
+        dot.style.opacity = "0";
+        makeParticleBurst(x, y, 66, 9.5, 3, 7, 1050, "spark");
+        setTimeout(showEnvelope, 1040);
+      }
+
+      function showEnvelope() {
+        textWrap.innerHTML = "";
+        envelopeStage.innerHTML = `
           <div class="envelope-shell" id="envelopeShell">
-            <div class="envelope-shadow"></div>
+            <div class="pull-label">
+              <div class="pull-text">вытяни</div>
+              <div class="pull-arrow"></div>
+            </div>
             <div class="envelope-back"></div>
-            <div class="envelope-inner"></div>
-
             <div class="paper" id="paper">
               <div class="paper-handle"></div>
               <div class="paper-grip">тянуть вверх</div>
               <div class="paper-content">
-                <div class="paper-title">для тебя</div>
-                <div class="paper-body">
-                  Ты — моё тихое счастье, мой самый тёплый дом и моя любимая улыбка.
-                  Спасибо за каждый день рядом. Я люблю тебя всё сильнее.
-                </div>
+                <span class="placeholder">Текст письма появится здесь</span>
               </div>
             </div>
-
             <div class="envelope-front"></div>
             <div class="envelope-flap" id="flap"></div>
             <div class="envelope-seal" id="seal"></div>
           </div>
-        </div>
-      `;
-      envelopeStage.style.opacity = '1';
-      envelopeStage.style.transform = 'translateY(0)';
+        `;
 
-      const shell = document.getElementById('envelopeShell');
-      const flap = document.getElementById('flap');
-      const seal = document.getElementById('seal');
-      const paper = document.getElementById('paper');
+        envelopeStage.style.opacity = "1";
+        envelopeStage.style.transform = "translateY(0)";
 
-      let opened = false;
-      let dragging = false;
-      let extracting = false;
-      let extracted = false;
-      let startY = 0;
-      let startTranslate = 42;
-      let currentTranslate = 42;
-      const paperTopLimit = -78;
-      const paperBottomLimit = 42;
+        const shell = document.getElementById("envelopeShell");
+        const flap = document.getElementById("flap");
+        const seal = document.getElementById("seal");
+        const paper = document.getElementById("paper");
 
-      function clamp(v, min, max) {
-        return Math.max(min, Math.min(max, v));
-      }
+        let opened = false;
+        let extracting = false;
+        let finished = false;
+        let autoPullTimer = null;
 
-      function setPaperTranslate(percent) {
-        currentTranslate = clamp(percent, paperTopLimit, paperBottomLimit);
-        const tilt = (42 - currentTranslate) * 0.05;
-        paper.style.transform = `translateY(${currentTranslate}%) rotate(${tilt}deg)`;
-      }
+        paper.style.transform = "translateY(42%)";
 
-      setPaperTranslate(currentTranslate);
-
-      function openEnvelope() {
-        if (opened) return;
-        opened = true;
-        shell.classList.add('open');
-        flap.classList.add('open');
-        seal.classList.add('gone');
-        paper.classList.add('paper-ready');
-        paper.animate([
-          { transform: 'translateY(42%) rotate(0deg)' },
-          { transform: 'translateY(35%) rotate(-0.5deg)' }
-        ], {
-          duration: 620,
-          easing: 'cubic-bezier(0.16, 0.84, 0.22, 1)',
-          fill: 'forwards'
-        });
-        currentTranslate = 35;
-      }
-
-      function burstEnvelope(cx, cy) {
-        makeParticleBurst(cx, cy, 56, 8.2, 3, 7, 900, 'spark');
-        makeParticleBurst(cx, cy, 26, 5.5, 3, 6, 840, 'dot');
-      }
-
-      function finalizeExtraction(floatingPaper, target) {
-        floatingPaper.animate([
-          { transform: 'translate(0px, 0px) scale(1)', opacity: 1 },
-          { transform: `translate(${target.dx * 0.84}px, ${target.dy * 0.84}px) scale(${target.scale * 0.96})`, opacity: 0.99, offset: 0.72 },
-          { transform: `translate(${target.dx}px, ${target.dy}px) scale(${target.scale})`, opacity: 1 }
-        ], {
-          duration: 1120,
-          easing: 'cubic-bezier(0.16, 0.84, 0.22, 1)',
-          fill: 'forwards'
-        }).onfinish = () => {
-          floatingPaper.classList.add('paper-center');
-          floatingPaper.style.left = target.left + 'px';
-          floatingPaper.style.top = target.top + 'px';
-          floatingPaper.style.width = target.width + 'px';
-          floatingPaper.style.height = target.height + 'px';
-          floatingPaper.style.transform = 'none';
-          floatingPaper.style.transformOrigin = 'top left';
+        const openEnvelope = () => {
+          if (opened) return;
+          opened = true;
+          flap.classList.add("open");
+          seal.classList.add("gone");
+          shell.classList.add("paper-ready");
+          paper.animate(
+            [
+              { transform: "translateY(42%) scale(1)" },
+              { transform: "translateY(34%) scale(1.01)" },
+            ],
+            {
+              duration: 650,
+              easing: "cubic-bezier(0.16, 0.84, 0.22, 1)",
+              fill: "forwards",
+            }
+          );
+          paper.style.transform = "translateY(34%)";
         };
-      }
 
-      function startExtraction() {
-        if (extracting || extracted) return;
-        extracting = true;
-        dragging = false;
-        extracted = true;
+        const removeEnvelope = () => {
+          if (finished) return;
+          finished = true;
 
-        const shellRect = shell.getBoundingClientRect();
-        const paperRect = paper.getBoundingClientRect();
+          const rect = shell.getBoundingClientRect();
+          const cx = rect.left + rect.width / 2;
+          const cy = rect.top + rect.height / 2;
 
-        const targetWidth = Math.min(window.innerWidth * 0.88, 560);
-        const scale = targetWidth / paperRect.width;
-        const targetHeight = paperRect.height * scale;
-        const targetLeft = (window.innerWidth - targetWidth) / 2;
-        const targetTop = (window.innerHeight - targetHeight) / 2;
+          flap.classList.remove("open");
+          seal.classList.add("gone");
 
-        const floatingPaper = paper.cloneNode(true);
-        floatingPaper.id = 'paper-floating';
-        floatingPaper.classList.add('paper-floating');
-        floatingPaper.style.left = paperRect.left + 'px';
-        floatingPaper.style.top = paperRect.top + 'px';
-        floatingPaper.style.width = paperRect.width + 'px';
-        floatingPaper.style.height = paperRect.height + 'px';
-        floatingPaper.style.transform = 'translate(0px, 0px) scale(1)';
-        floatingPaper.style.opacity = '1';
-        floatingPaper.style.pointerEvents = 'none';
-        floatingPaper.style.transformOrigin = 'top left';
-        floatingPaper.style.zIndex = '30';
-        document.body.appendChild(floatingPaper);
+          makeParticleBurst(cx, cy, 74, 8.5, 3, 8, 1120, "spark");
+          makeParticleBurst(cx, cy, 26, 7, 5, 10, 900, "dot");
 
-        paper.style.opacity = '0';
-        paper.style.pointerEvents = 'none';
+          shell.animate(
+            [
+              { transform: "translateY(8px) scale(1)", opacity: 1 },
+              {
+                transform: "translateY(8px) scale(0.96) rotate(-1deg)",
+                opacity: 0.86,
+                offset: 0.25,
+              },
+              {
+                transform: "translateY(8px) scale(0.55) rotate(6deg)",
+                opacity: 0,
+              },
+            ],
+            {
+              duration: 650,
+              easing: "cubic-bezier(0.16, 0.84, 0.22, 1)",
+              fill: "forwards",
+            }
+          );
 
-        openEnvelope();
-
-        const dx = targetLeft - paperRect.left;
-        const dy = targetTop - paperRect.top;
-        const burstX = shellRect.left + shellRect.width / 2;
-        const burstY = shellRect.top + shellRect.height / 2;
-
-        requestAnimationFrame(() => {
           setTimeout(() => {
-            finalizeExtraction(floatingPaper, {
-              left: targetLeft,
-              top: targetTop,
-              width: targetWidth,
-              height: targetHeight,
-              scale,
-              dx,
-              dy
-            });
-          }, 90);
-        });
+            envelopeStage.style.opacity = "0";
+            envelopeStage.style.transform = "translateY(14px)";
+          }, 420);
 
-        setTimeout(() => {
-          flap.animate([
-            { transform: 'rotateX(-174deg) translateY(-2px)' },
-            { transform: 'rotateX(0deg) translateY(0)' }
-          ], {
-            duration: 360,
-            easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)',
-            fill: 'forwards'
-          });
-        }, 70);
-
-        setTimeout(() => {
-          burstEnvelope(burstX, burstY);
-        }, 430);
-
-        shell.animate([
-          { transform: 'translateY(8px) scale(1)', opacity: 1 },
-          { transform: 'translateY(8px) scale(0.98)', opacity: 1, offset: 0.24 },
-          { transform: 'translateY(8px) scale(0.18) rotate(10deg)', opacity: 0 }
-        ], {
-          duration: 760,
-          easing: 'cubic-bezier(0.16, 0.84, 0.22, 1)',
-          fill: 'forwards'
-        });
-
-        setTimeout(() => {
-          shell.remove();
-          envelopeStage.style.opacity = '0';
-          envelopeStage.style.transform = 'translateY(14px)';
-        }, 820);
-      }
-
-      paper.addEventListener('pointerdown', (e) => {
-        if (extracted || extracting) return;
-        if (!opened) openEnvelope();
-        dragging = true;
-        startY = e.clientY;
-        startTranslate = currentTranslate;
-        paper.classList.add('grabbing');
-        try { paper.setPointerCapture(e.pointerId); } catch (_) {}
-      });
-
-      paper.addEventListener('pointermove', (e) => {
-        if (!dragging || extracted || extracting) return;
-        const deltaPx = startY - e.clientY;
-        const envelopeHeight = shell.getBoundingClientRect().height || 1;
-        const deltaPercent = (deltaPx / envelopeHeight) * 100;
-        const next = startTranslate - deltaPercent;
-
-        setPaperTranslate(next);
-
-        if (deltaPx > 14) {
-          startExtraction();
-        }
-      });
-
-      function finishDrag() {
-        if (!dragging || extracted || extracting) {
-          paper.classList.remove('grabbing');
-          return;
-        }
-        dragging = false;
-        paper.classList.remove('grabbing');
-
-        if (currentTranslate < 18) {
-          startExtraction();
-          return;
-        }
-
-        paper.animate([
-          { transform: `translateY(${currentTranslate}%) rotate(${(42 - currentTranslate) * 0.05}deg)` },
-          { transform: 'translateY(35%) rotate(-0.3deg)' }
-        ], {
-          duration: 420,
-          easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)',
-          fill: 'forwards'
-        }).onfinish = () => {
-          if (!extracting && !extracted) setPaperTranslate(35);
+          setTimeout(() => {
+            envelopeStage.innerHTML = "";
+          }, 900);
         };
+
+        const movePaperToCenter = () => {
+          const rect = paper.getBoundingClientRect();
+          const floating = paper.cloneNode(true);
+          floating.classList.add("floating-paper");
+          floating.id = "floatingPaper";
+          floating.style.left = rect.left + "px";
+          floating.style.top = rect.top + "px";
+          floating.style.width = rect.width + "px";
+          floating.style.height = rect.height + "px";
+          floating.style.transform = "translate(0px, 0px) scale(1)";
+          floating.style.opacity = "1";
+
+          document.body.appendChild(floating);
+
+          const centerLeft = Math.round(window.innerWidth / 2 - rect.width / 2);
+          const centerTop = Math.round(window.innerHeight / 2 - rect.height / 2);
+
+          floating.animate(
+            [
+              {
+                left: rect.left + "px",
+                top: rect.top + "px",
+                transform: "translateY(0px) scale(1)",
+                opacity: 0.98,
+              },
+              {
+                left: rect.left + "px",
+                top: rect.top - 32 + "px",
+                transform: "translateY(-10px) scale(1.015)",
+                opacity: 1,
+                offset: 0.22,
+              },
+              {
+                left: centerLeft + "px",
+                top: centerTop + "px",
+                transform: "translateY(0px) scale(1.02)",
+                opacity: 1,
+              },
+            ],
+            {
+              duration: 980,
+              easing: "cubic-bezier(0.16, 0.84, 0.22, 1)",
+              fill: "forwards",
+            }
+          );
+
+          setTimeout(() => {
+            floating.style.left = centerLeft + "px";
+            floating.style.top = centerTop + "px";
+            floating.style.transform = "translateY(0px) scale(1.02)";
+            floating.style.pointerEvents = "none";
+          }, 980);
+        };
+
+        const triggerExtraction = () => {
+          if (extracting || finished) return;
+          extracting = true;
+          clearTimeout(autoPullTimer);
+
+          openEnvelope();
+
+          const lift = paper.animate(
+            [
+              { transform: "translateY(34%) scale(1)" },
+              { transform: "translateY(26%) scale(1.01)" },
+            ],
+            {
+              duration: 180,
+              easing: "cubic-bezier(0.18, 0.88, 0.22, 1)",
+              fill: "forwards",
+            }
+          );
+
+          lift.onfinish = () => {
+            paper.animate(
+              [
+                { transform: "translateY(26%) scale(1.01)" },
+                { transform: "translateY(-2%) scale(1.02)" },
+                { transform: "translateY(-58%) scale(1.005)" },
+              ],
+              {
+                duration: 760,
+                easing: "cubic-bezier(0.16, 0.84, 0.22, 1)",
+                fill: "forwards",
+              }
+            );
+
+            setTimeout(() => {
+              movePaperToCenter();
+              removeEnvelope();
+            }, 520);
+          };
+        };
+
+        const paperPointerDown = (e) => {
+          e.stopPropagation();
+          if (finished || extracting) return;
+          if (!opened) openEnvelope();
+          extracting = true;
+
+          paper.setPointerCapture?.(e.pointerId);
+
+          autoPullTimer = setTimeout(() => {
+            triggerExtraction();
+          }, 90);
+
+          paper.animate(
+            [
+              { transform: "translateY(34%) scale(1)" },
+              { transform: "translateY(30%) scale(1.008)" },
+            ],
+            {
+              duration: 120,
+              easing: "ease-out",
+              fill: "forwards",
+            }
+          );
+        };
+
+        const paperPointerMove = (e) => {
+          if (!extracting || finished) return;
+          const rect = shell.getBoundingClientRect();
+          const deltaPx = Math.max(0, rect.bottom - e.clientY);
+          if (deltaPx > 16) {
+            clearTimeout(autoPullTimer);
+            triggerExtraction();
+          }
+        };
+
+        const paperPointerUp = () => {
+          if (finished) return;
+          clearTimeout(autoPullTimer);
+          if (extracting) {
+            triggerExtraction();
+          }
+        };
+
+        paper.addEventListener("pointerdown", paperPointerDown);
+        paper.addEventListener("pointermove", paperPointerMove);
+        paper.addEventListener("pointerup", paperPointerUp);
+        paper.addEventListener("pointercancel", paperPointerUp);
+        paper.addEventListener("pointerleave", paperPointerUp);
+
+        flap.addEventListener("pointerdown", (e) => {
+          e.stopPropagation();
+          openEnvelope();
+        });
+
+        shell.addEventListener("pointerdown", (e) => {
+          if (finished) return;
+          if (e.target === paper || paper.contains(e.target)) return;
+          openEnvelope();
+        });
+
+        paper.addEventListener("click", (e) => {
+          e.stopPropagation();
+          if (finished) return;
+          triggerExtraction();
+        });
+
+        envelopeStage.animate(
+          [
+            { opacity: 0, transform: "translateY(14px) scale(0.99)" },
+            { opacity: 1, transform: "translateY(0) scale(1)" },
+          ],
+          {
+            duration: 780,
+            easing: "cubic-bezier(0.16, 0.84, 0.22, 1)",
+            fill: "forwards",
+          }
+        );
       }
 
-      paper.addEventListener('pointerup', finishDrag);
-      paper.addEventListener('pointercancel', finishDrag);
-      paper.addEventListener('pointerleave', finishDrag);
+      requestAnimationFrame(showTextSequence);
 
-      flap.addEventListener('pointerdown', (e) => {
-        e.stopPropagation();
-        if (extracting || extracted) return;
-        openEnvelope();
-      });
+      async function tryPlayMusic() {
+        try {
+          await music.play();
+          musicBtn.textContent = "Музыка играет";
+          setTimeout(() => {
+            musicBtn.style.opacity = "0.18";
+          }, 1200);
+        } catch (_) {
+          // autoplay restrictions are normal; user can tap again
+        }
+      }
 
-      shell.addEventListener('pointerdown', (e) => {
-        if (extracting || extracted) return;
-        if (e.target === paper || paper.contains(e.target)) return;
-        openEnvelope();
-      });
-
-      shell.addEventListener('click', () => {
-        if (!opened) openEnvelope();
-      });
-
-      envelopeStage.animate([
-        { opacity: 0, transform: 'translateY(14px) scale(0.99)' },
-        { opacity: 1, transform: 'translateY(0) scale(1)' }
-      ], {
-        duration: 780,
-        easing: 'cubic-bezier(0.16, 0.84, 0.22, 1)',
-        fill: 'forwards'
-      });
-    }
-
-    requestAnimationFrame(showTextSequence);
-
-    async function tryPlayMusic() {
-      try {
-        await music.play();
-        musicBtn.textContent = 'Музыка играет';
-        setTimeout(() => {
-          musicBtn.style.opacity = '0.18';
-        }, 1200);
-      } catch (_) {}
-    }
-
-    musicBtn.addEventListener('pointerdown', tryPlayMusic);
-    document.addEventListener('pointerdown', () => {
-      if (music.paused) tryPlayMusic();
-    }, { once: true });
-  </script>
-</body>
+      musicBtn.addEventListener("pointerdown", tryPlayMusic);
+      document.addEventListener(
+        "pointerdown",
+        () => {
+          if (music.paused) tryPlayMusic();
+        },
+        { once: true }
+      );
+    </script>
+  </body>
 </html>
