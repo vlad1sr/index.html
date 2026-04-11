@@ -4,24 +4,22 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>...</title>
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,700;0,800;1,700;1,800&family=Playfair+Display:ital,wght@0,600;1,600;1,700&display=swap" rel="stylesheet">
-
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,700;0,800;1,700;1,800&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #050507;
       --pink: #ff8acb;
       --pink-2: #ffb3df;
       --rose: #ffd1ea;
-      --paper: #f2d9b4;
-      --paper-dark: #d7b484;
+      --paper: #f7e6ca;
+      --paper-2: #eecfa5;
+      --paper-dark: #d6ad78;
       --ink: #2f2118;
       --shadow: rgba(0, 0, 0, 0.38);
       --ease-out: cubic-bezier(0.18, 0.88, 0.22, 1);
       --ease-soft: cubic-bezier(0.2, 0.8, 0.2, 1);
-      --ios: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", Inter, system-ui, sans-serif;
     }
 
     * { box-sizing: border-box; }
@@ -31,9 +29,8 @@
       height: 100%;
       margin: 0;
       overflow: hidden;
-      background:
-        radial-gradient(1200px 800px at 50% 40%, #120812 0%, #070709 45%, #020203 100%);
-      font-family: var(--ios);
+      background: radial-gradient(1200px 800px at 50% 40%, #120812 0%, #070709 45%, #020203 100%);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
       -webkit-font-smoothing: antialiased;
       text-rendering: geometricPrecision;
       user-select: none;
@@ -47,7 +44,6 @@
       inset: 0;
       width: 100vw;
       height: 100vh;
-      pointer-events: none;
     }
 
     .stage {
@@ -66,15 +62,6 @@
       place-items: center;
     }
 
-    .soft-glow {
-      position: absolute;
-      inset: -24px;
-      border-radius: 42px;
-      background: radial-gradient(circle at 50% 50%, rgba(255, 148, 206, 0.13), transparent 55%);
-      filter: blur(18px);
-      pointer-events: none;
-    }
-
     .text-wrap {
       position: absolute;
       inset: 0;
@@ -85,6 +72,14 @@
       pointer-events: none;
     }
 
+    .scene-block {
+      position: relative;
+      display: grid;
+      place-items: center;
+      gap: 14px;
+      pointer-events: auto;
+    }
+
     .word {
       opacity: 0;
       transform: translateY(18px) scale(0.985);
@@ -92,7 +87,7 @@
         opacity 1.35s var(--ease-soft),
         transform 1.35s var(--ease-soft);
       color: #fff7fb;
-      font-family: var(--ios);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
       font-style: italic;
       font-weight: 800;
       letter-spacing: 0.01em;
@@ -100,14 +95,13 @@
       font-size: clamp(28px, 4.4vw, 52px);
       text-shadow:
         -1px -1px 0 rgba(0, 0, 0, 0.95),
-         1px -1px 0 rgba(0, 0, 0, 0.95),
+        1px -1px 0 rgba(0, 0, 0, 0.95),
         -1px  1px 0 rgba(0, 0, 0, 0.95),
-         1px  1px 0 rgba(0, 0, 0, 0.95),
-         0 0 16px rgba(0, 0, 0, 0.72),
-         0 0 28px rgba(0, 0, 0, 0.35);
+        1px  1px 0 rgba(0, 0, 0, 0.95),
+        0 0 16px rgba(0, 0, 0, 0.72),
+        0 0 28px rgba(0, 0, 0, 0.35);
       filter: drop-shadow(0 0 1px rgba(0,0,0,0.8));
       max-width: 88vw;
-      white-space: pre-line;
     }
 
     .word.show {
@@ -121,11 +115,13 @@
       aspect-ratio: 1;
       pointer-events: auto;
       cursor: pointer;
+      border: 0;
+      padding: 0;
+      background: transparent;
+      outline: none;
       touch-action: manipulation;
       filter: drop-shadow(0 18px 26px rgba(255, 112, 175, 0.16));
       transform: translateZ(0);
-      display: grid;
-      place-items: center;
     }
 
     .heart {
@@ -137,9 +133,9 @@
       box-shadow:
         inset -10px -12px 18px rgba(167, 18, 92, 0.14),
         inset 8px 10px 18px rgba(255,255,255,0.2);
-      transition: transform 0.85s var(--ease-soft), opacity 0.45s ease, filter 0.45s ease;
+      transition: transform 0.35s var(--ease-soft), opacity 0.35s ease;
       animation: beat 1.7s var(--ease-soft) infinite;
-      will-change: transform, opacity;
+      will-change: transform;
     }
 
     .heart::before,
@@ -169,12 +165,13 @@
       color: rgba(255, 248, 252, 0.92);
       text-shadow:
         -1px -1px 0 rgba(0, 0, 0, 0.95),
-         1px -1px 0 rgba(0, 0, 0, 0.95),
+        1px -1px 0 rgba(0, 0, 0, 0.95),
         -1px  1px 0 rgba(0, 0, 0, 0.95),
-         1px  1px 0 rgba(0, 0, 0, 0.95);
+        1px  1px 0 rgba(0, 0, 0, 0.95);
       opacity: 0;
       transform: translateY(12px);
       transition: opacity 1s var(--ease-soft), transform 1s var(--ease-soft);
+      pointer-events: none;
     }
 
     .hint.show {
@@ -193,7 +190,7 @@
       animation: pulse 1.8s var(--ease-soft) infinite;
       pointer-events: auto;
       cursor: pointer;
-      will-change: transform, opacity;
+      will-change: transform;
       touch-action: manipulation;
     }
 
@@ -202,61 +199,31 @@
       50% { transform: scale(1.16); }
     }
 
-    .arrow-wrap {
-      position: relative;
-      width: 140px;
-      height: 74px;
-      margin-top: 2px;
-      pointer-events: none;
-    }
-
-    .arrow-label {
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      color: rgba(255,255,255,0.94);
-      font: 800 15px/1 var(--ios);
-      letter-spacing: 0.03em;
-      text-transform: lowercase;
-      text-shadow:
-        -1px -1px 0 rgba(0,0,0,0.8),
-         1px -1px 0 rgba(0,0,0,0.8),
-        -1px  1px 0 rgba(0,0,0,0.8),
-         1px  1px 0 rgba(0,0,0,0.8);
-      opacity: 0.88;
-      pointer-events: none;
-    }
-
     .arrow-line {
       position: absolute;
-      left: 50%;
-      top: 22px;
-      width: 2px;
-      height: 36px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.88), rgba(255,255,255,0.14));
-      transform: translateX(-50%);
-      border-radius: 999px;
+      width: 100px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.82), transparent);
+      transform: rotate(20deg);
+      opacity: 0.85;
+      filter: blur(0.1px);
       animation: arrowFloat 1.8s ease-in-out infinite;
-      box-shadow: 0 0 12px rgba(255,255,255,0.1);
     }
 
-    .arrow-line::before {
-      content: "";
+    .arrow-tip {
       position: absolute;
-      left: 50%;
-      bottom: -1px;
-      width: 12px;
-      height: 12px;
-      border-right: 2px solid rgba(255,255,255,0.92);
-      border-bottom: 2px solid rgba(255,255,255,0.92);
-      transform: translateX(-50%) rotate(45deg);
-      border-radius: 1px;
+      width: 14px;
+      height: 14px;
+      border-right: 2px solid rgba(255,255,255,0.85);
+      border-top: 2px solid rgba(255,255,255,0.85);
+      transform: rotate(45deg);
+      right: -1px;
+      top: -6px;
     }
 
     @keyframes arrowFloat {
-      0%, 100% { transform: translateX(-50%) translateY(0); }
-      50% { transform: translateX(-50%) translateY(-8px); }
+      0%, 100% { transform: translateY(0) rotate(20deg); }
+      50% { transform: translateY(-8px) rotate(20deg); }
     }
 
     .particles {
@@ -274,6 +241,7 @@
       background: linear-gradient(180deg, #ffd7ea, #ff87c8);
       box-shadow: 0 0 10px rgba(255, 143, 196, 0.45);
       will-change: transform, opacity;
+      pointer-events: none;
     }
 
     .spark {
@@ -284,6 +252,7 @@
       background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,124,186,0.95));
       box-shadow: 0 0 10px rgba(255, 143, 196, 0.46);
       will-change: transform, opacity;
+      pointer-events: none;
     }
 
     .envelope-stage {
@@ -293,246 +262,175 @@
       place-items: center;
       pointer-events: auto;
       opacity: 0;
-      transform: translateY(14px) scale(0.99);
+      transform: translateY(14px);
       transition: opacity 0.8s var(--ease-soft), transform 0.8s var(--ease-soft);
     }
 
-    .envelope-stage.visible {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
-
     .envelope-ui {
-      position: absolute;
-      top: calc(50% - 196px);
-      left: 50%;
-      transform: translateX(-50%);
+      position: relative;
+      width: min(86vw, 480px);
       display: grid;
       place-items: center;
-      gap: 10px;
+      pointer-events: auto;
+      perspective: 1400px;
+    }
+
+    .pull-hint {
+      position: absolute;
+      top: -44px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
       pointer-events: none;
-      z-index: 12;
-      width: min(92vw, 500px);
-    }
-
-    .envelope-ui .title {
-      font: 800 18px/1 var(--ios);
+      color: rgba(255,255,255,0.93);
+      font: 700 clamp(16px, 2vw, 20px)/1 Inter, -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
       letter-spacing: 0.02em;
-      color: rgba(255,255,255,0.94);
-      text-shadow:
-        -1px -1px 0 rgba(0,0,0,0.78),
-         1px -1px 0 rgba(0,0,0,0.78),
-        -1px  1px 0 rgba(0,0,0,0.78),
-         1px  1px 0 rgba(0,0,0,0.78);
+      text-shadow: 0 10px 20px rgba(0,0,0,0.38);
     }
 
-    .envelope-ui .arrow {
+    .pull-hint span {
+      opacity: 0.96;
+    }
+
+    .pull-arrow {
       position: relative;
-      width: 120px;
-      height: 54px;
+      width: 64px;
+      height: 34px;
+      opacity: 0.9;
+      animation: hintFloat 1.6s ease-in-out infinite;
+    }
+
+    .pull-arrow::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 0;
+      width: 2px;
+      height: 22px;
+      transform: translateX(-50%);
+      background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.15));
+      border-radius: 999px;
+    }
+
+    .pull-arrow::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 3px;
+      width: 14px;
+      height: 14px;
+      transform: translateX(-50%) rotate(45deg);
+      border-left: 2px solid rgba(255,255,255,0.9);
+      border-bottom: 2px solid rgba(255,255,255,0.9);
+      border-radius: 2px;
+    }
+
+    @keyframes hintFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
     }
 
     .envelope-shell {
       position: relative;
-      width: min(82vw, 430px);
-      height: min(54vw, 285px);
-      max-height: 285px;
-      transform: translateY(12px);
-      filter:
-        drop-shadow(0 25px 40px rgba(0,0,0,0.32))
-        drop-shadow(0 0 28px rgba(255, 161, 209, 0.08));
-      perspective: 1200px;
-      will-change: transform, opacity;
+      width: min(80vw, 420px);
+      height: min(50vw, 260px);
+      max-height: 260px;
+      transform: translateY(8px);
+      transform-style: preserve-3d;
+      filter: drop-shadow(0 22px 34px rgba(0,0,0,0.28));
+      touch-action: none;
+      cursor: default;
     }
 
-    .envelope-base {
+    .envelope-shadow {
       position: absolute;
-      inset: 0;
-      border-radius: 28px;
-      overflow: hidden;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0) 18%),
-        linear-gradient(180deg, #f1cfa4 0%, #dfb58a 100%);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.32),
-        inset 0 -18px 30px rgba(145, 87, 30, 0.08);
-    }
-
-    .envelope-base::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(120px 60px at 20% 14%, rgba(255,255,255,0.18), transparent 70%),
-        radial-gradient(180px 80px at 85% 22%, rgba(255,255,255,0.08), transparent 70%),
-        repeating-linear-gradient(135deg, rgba(255,255,255,0.02) 0 2px, rgba(255,255,255,0) 2px 8px);
-      mix-blend-mode: soft-light;
-      pointer-events: none;
-      opacity: 0.65;
+      inset: 16px 12px -18px 12px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 50% 50%, rgba(0,0,0,0.28), transparent 70%);
+      filter: blur(18px);
+      transform: translateY(34px) scaleX(0.96);
+      opacity: 0.55;
+      z-index: 0;
     }
 
     .envelope-back {
       position: absolute;
       inset: 0;
-      border-radius: 28px;
       background:
-        linear-gradient(180deg, #f5d4aa 0%, #e2b98f 100%);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.28),
-        inset 0 -14px 22px rgba(117, 71, 29, 0.08);
+        linear-gradient(145deg, rgba(255,255,255,0.26), rgba(255,255,255,0) 26%),
+        linear-gradient(180deg, #f3d4aa 0%, #e7bf90 46%, #d7aa78 100%);
+      border-radius: 26px;
       overflow: hidden;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.34),
+        inset 0 -18px 26px rgba(145, 87, 30, 0.10);
+      z-index: 1;
     }
 
-    .envelope-back::before,
+    .envelope-back::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(135deg, transparent 49.45%, rgba(146, 95, 43, 0.28) 50%, transparent 50.55%),
+        linear-gradient(225deg, transparent 49.45%, rgba(255,255,255,0.14) 50%, transparent 50.55%);
+      opacity: 0.65;
+      mix-blend-mode: multiply;
+      pointer-events: none;
+    }
+
     .envelope-back::after {
       content: "";
       position: absolute;
       inset: 0;
-      pointer-events: none;
-      opacity: 0.7;
-    }
-
-    .envelope-back::before {
       background:
-        linear-gradient(135deg, transparent 49.3%, rgba(142, 92, 44, 0.28) 50%, transparent 50.8%),
-        linear-gradient(225deg, transparent 49.3%, rgba(142, 92, 44, 0.16) 50%, transparent 50.8%);
-      mix-blend-mode: multiply;
-    }
-
-    .envelope-back::after {
-      background:
-        radial-gradient(120px 55px at 50% 0%, rgba(255,255,255,0.18), transparent 60%),
-        radial-gradient(140px 90px at 50% 100%, rgba(98, 61, 24, 0.12), transparent 70%);
-    }
-
-    .envelope-side-left,
-    .envelope-side-right {
-      position: absolute;
-      top: 0;
-      width: 52%;
-      height: 100%;
-      z-index: 2;
+        repeating-linear-gradient(0deg, rgba(255,255,255,0.04) 0 1px, transparent 1px 5px),
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.035) 0 1px, transparent 1px 7px);
+      opacity: 0.45;
+      mix-blend-mode: soft-light;
       pointer-events: none;
     }
 
-    .envelope-side-left {
-      left: 0;
-      clip-path: polygon(0 0, 100% 50%, 0 100%);
-      background:
-        linear-gradient(180deg, #efd0a7 0%, #ddb88c 100%);
-      opacity: 0.86;
-      filter: brightness(0.98);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12);
-    }
-
-    .envelope-side-right {
-      right: 0;
-      clip-path: polygon(100% 0, 0 50%, 100% 100%);
-      background:
-        linear-gradient(180deg, #eac89d 0%, #d6ab7e 100%);
-      opacity: 0.88;
-      filter: brightness(0.98);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.10);
-    }
-
-    .envelope-front {
+    .envelope-inner {
       position: absolute;
       left: 0;
       right: 0;
       bottom: 0;
-      height: 68%;
+      height: 66%;
       background:
-        linear-gradient(180deg, rgba(255,255,255,0.08), transparent 20%),
-        linear-gradient(180deg, #e7bf90 0%, #d7aa79 100%);
-      clip-path: polygon(0 12%, 50% 58%, 100% 12%, 100% 100%, 0 100%);
-      border-radius: 0 0 26px 26px;
-      opacity: 0.98;
+        linear-gradient(180deg, rgba(207, 159, 104, 0.14) 0%, rgba(156, 102, 49, 0.12) 100%),
+        linear-gradient(180deg, #d8ab79 0%, #c79360 100%);
+      clip-path: polygon(0 14%, 50% 60%, 100% 14%, 100% 100%, 0 100%);
+      border-radius: 0 0 24px 24px;
+      opacity: 0.92;
+      z-index: 2;
       pointer-events: none;
-      z-index: 5;
-      box-shadow:
-        inset 0 -20px 26px rgba(132, 82, 35, 0.08);
-    }
-
-    .envelope-flap {
-      position: absolute;
-      inset: 0;
-      clip-path: polygon(0 0, 50% 50%, 100% 0, 100% 16%, 50% 64%, 0 16%);
-      background:
-        linear-gradient(180deg, #ebc89d 0%, #c9905c 100%);
-      transform-origin: 50% 16%;
-      transform: rotateX(0deg) translateY(0);
-      transition: transform 0.95s var(--ease-soft), filter 0.95s var(--ease-soft), opacity 0.35s ease;
-      z-index: 8;
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.38),
-        0 10px 20px rgba(0,0,0,0.06);
-      cursor: pointer;
-      will-change: transform, opacity;
-    }
-
-    .envelope-flap::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(180px 80px at 50% 22%, rgba(255,255,255,0.18), transparent 60%),
-        linear-gradient(180deg, rgba(255,255,255,0.12), transparent 45%);
-      pointer-events: none;
-    }
-
-    .envelope-flap.open {
-      transform: rotateX(180deg) translateY(-2px);
-      filter: brightness(0.98);
-      cursor: default;
-    }
-
-    .envelope-seal {
-      position: absolute;
-      left: 50%;
-      top: 46%;
-      width: 36px;
-      height: 36px;
-      transform: translate(-50%, -50%);
-      border-radius: 50%;
-      background: radial-gradient(circle at 35% 35%, #ffd9ea 0%, #ff8bc9 38%, #eb5c9f 100%);
-      box-shadow: 0 0 0 6px rgba(255, 138, 203, 0.08), 0 10px 22px rgba(0, 0, 0, 0.14);
-      z-index: 9;
-      transition: opacity 0.3s ease, transform 0.8s var(--ease-soft);
-    }
-
-    .envelope-seal.gone {
-      opacity: 0;
-      transform: translate(-50%, -50%) scale(0.25);
     }
 
     .paper {
       position: absolute;
       left: 7%;
       width: 86%;
-      height: 83%;
-      bottom: 10%;
+      height: 82%;
+      bottom: 8%;
       border-radius: 18px;
       background:
-        linear-gradient(180deg, rgba(255,255,255,0.34), rgba(255,255,255,0.07)),
-        linear-gradient(180deg, #f8e7cb 0%, #efd6ad 100%);
-      border: 1px solid rgba(92, 59, 24, 0.08);
+        radial-gradient(700px 240px at 50% 0%, rgba(255,255,255,0.35), transparent 56%),
+        linear-gradient(180deg, rgba(255,255,255,0.24), rgba(255,255,255,0.06)),
+        linear-gradient(180deg, #f9ecd4 0%, #f0d8b2 100%);
+      border: 1px solid rgba(92, 59, 24, 0.09);
       box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.38),
-        0 14px 28px rgba(0,0,0,0.10);
-      transform: translateY(38%) translateZ(0);
-      z-index: 6;
-      touch-action: none;
+        inset 0 1px 0 rgba(255,255,255,0.40),
+        0 16px 28px rgba(0,0,0,0.11);
+      transform: translateY(42%) translateZ(0) rotate(0deg);
+      z-index: 3;
       pointer-events: auto;
-      will-change: transform, top, left, width, height, opacity;
+      will-change: transform;
       overflow: hidden;
-      transition:
-        box-shadow 0.45s var(--ease-soft),
-        filter 0.45s var(--ease-soft);
-      cursor: grab;
-    }
-
-    .paper:active {
-      cursor: grabbing;
+      touch-action: none;
     }
 
     .paper::before {
@@ -540,21 +438,20 @@
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(900px 220px at 50% 0%, rgba(255,255,255,0.34), transparent 60%),
-        repeating-linear-gradient(180deg, rgba(47,33,24,0.018) 0 1px, transparent 1px 7px);
+        radial-gradient(800px 220px at 50% 0%, rgba(255,255,255,0.36), transparent 58%),
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.08) 0 1px, transparent 1px 8px),
+        repeating-linear-gradient(0deg, rgba(255,255,255,0.04) 0 1px, transparent 1px 6px);
+      opacity: 0.7;
       pointer-events: none;
-      opacity: 0.8;
+      mix-blend-mode: soft-light;
     }
 
     .paper::after {
       content: "";
       position: absolute;
       inset: 0;
-      background:
-        radial-gradient(180px 100px at 50% 0%, rgba(255,255,255,0.30), transparent 70%),
-        radial-gradient(400px 140px at 50% 100%, rgba(0,0,0,0.05), transparent 70%);
+      background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.02) 100%);
       pointer-events: none;
-      mix-blend-mode: soft-light;
     }
 
     .paper-handle {
@@ -569,13 +466,48 @@
       opacity: 0.7;
     }
 
+    .paper-content {
+      position: absolute;
+      inset: 34px 24px 22px;
+      overflow: hidden;
+      color: var(--ink);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+      font-size: clamp(18px, 2.9vw, 30px);
+      line-height: 1.48;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      transform: translateY(6px);
+      opacity: 0.97;
+      user-select: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 12px;
+      text-align: left;
+    }
+
+    .paper-title {
+      font-size: 0.86em;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: rgba(47, 33, 24, 0.70);
+    }
+
+    .paper-body {
+      font-size: 1em;
+      font-weight: 600;
+      line-height: 1.52;
+      color: rgba(47, 33, 24, 0.94);
+    }
+
     .paper-grip {
       position: absolute;
       right: 14px;
       top: 14px;
       color: rgba(47, 33, 24, 0.42);
       font-size: 13px;
-      font-weight: 800;
+      font-weight: 700;
       letter-spacing: 0.02em;
       opacity: 0;
       transition: opacity 0.45s ease;
@@ -585,34 +517,110 @@
       opacity: 1;
     }
 
-    .paper-content {
+    .envelope-front {
       position: absolute;
-      inset: 34px 24px 20px;
-      overflow: hidden;
-      color: var(--ink);
-      font-family: "Playfair Display", Georgia, serif;
-      font-size: clamp(20px, 3vw, 30px);
-      line-height: 1.45;
-      font-weight: 600;
-      transform: translateY(4px);
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 66%;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0) 24%),
+        linear-gradient(180deg, #e7bf90 0%, #d7aa78 100%);
+      clip-path: polygon(0 0, 50% 56%, 100% 0, 100% 100%, 0 100%);
+      border-radius: 0 0 24px 24px;
       opacity: 0.98;
-      user-select: none;
-      white-space: pre-line;
-      text-shadow: 0 1px 0 rgba(255,255,255,0.18);
+      z-index: 4;
+      pointer-events: none;
     }
 
-    .paper-content .placeholder {
-      color: rgba(47, 33, 24, 0.64);
-      font-style: italic;
+    .envelope-front::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(135deg, transparent 49.45%, rgba(0,0,0,0.12) 50%, transparent 50.55%),
+        linear-gradient(225deg, transparent 49.45%, rgba(255,255,255,0.10) 50%, transparent 50.55%);
+      opacity: 0.55;
+      pointer-events: none;
+      mix-blend-mode: multiply;
     }
 
-    .paper.centered {
-      border-radius: 26px;
-      box-shadow:
-        0 28px 60px rgba(0,0,0,0.24),
-        0 0 0 1px rgba(255,255,255,0.12),
-        0 0 42px rgba(255, 165, 212, 0.12);
+    .envelope-flap {
+      position: absolute;
+      inset: 0;
+      clip-path: polygon(0 0, 50% 50%, 100% 0, 100% 14%, 50% 64%, 0 14%);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0) 28%),
+        linear-gradient(180deg, #efd0a7 0%, #c99767 100%);
+      transform-origin: 50% 0%;
+      transform: rotateX(0deg) translateY(0);
+      backface-visibility: hidden;
+      transition: transform 0.92s var(--ease-soft), filter 0.92s var(--ease-soft);
+      z-index: 6;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.35);
+      cursor: pointer;
+    }
+
+    .envelope-flap.open {
+      transform: rotateX(-174deg) translateY(-2px);
+      filter: brightness(0.98);
       cursor: default;
+    }
+
+    .envelope-seal {
+      position: absolute;
+      left: 50%;
+      top: 46%;
+      width: 34px;
+      height: 34px;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #ffd9ea 0%, #ff8bc9 38%, #eb5c9f 100%);
+      box-shadow: 0 0 0 6px rgba(255, 138, 203, 0.08), 0 10px 22px rgba(0, 0, 0, 0.14);
+      z-index: 7;
+      transition: opacity 0.3s ease, transform 0.8s var(--ease-soft);
+    }
+
+    .envelope-seal.gone {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.25);
+    }
+
+    .envelope-shell.open .paper {
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.40),
+        0 18px 30px rgba(0,0,0,0.13);
+    }
+
+    .paper.grabbing {
+      cursor: grabbing;
+    }
+
+    .paper-floating {
+      position: fixed;
+      margin: 0;
+      transform-origin: top left;
+      z-index: 30;
+      pointer-events: none;
+      box-shadow:
+        0 24px 70px rgba(0,0,0,0.28),
+        0 6px 18px rgba(0,0,0,0.12);
+    }
+
+    .paper-center {
+      border-radius: 24px;
+      box-shadow:
+        0 26px 70px rgba(0,0,0,0.32),
+        0 8px 18px rgba(0,0,0,0.12);
+    }
+
+    .soft-glow {
+      position: absolute;
+      inset: -24px;
+      border-radius: 42px;
+      background: radial-gradient(circle at 50% 50%, rgba(255, 148, 206, 0.13), transparent 55%);
+      filter: blur(18px);
+      pointer-events: none;
     }
 
     .music-btn {
@@ -630,9 +638,10 @@
       backdrop-filter: blur(18px);
       -webkit-backdrop-filter: blur(18px);
       box-shadow: 0 10px 24px rgba(0,0,0,0.22);
-      font: 600 14px/1 var(--ios);
+      font: 600 14px/1 Inter, -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
       letter-spacing: 0.01em;
       cursor: pointer;
+      touch-action: manipulation;
     }
 
     .music-btn:active { transform: scale(0.98); }
@@ -643,18 +652,17 @@
       bottom: 18px;
       z-index: 20;
       color: rgba(255,255,255,0.56);
-      font: 500 12px/1.4 var(--ios);
+      font: 500 12px/1.4 Inter, -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
       pointer-events: none;
     }
 
     .fade-out {
       opacity: 0;
-      transform: scale(0.98);
+      transform: scale(0.96);
       transition: opacity 0.55s ease, transform 0.55s ease;
     }
   </style>
 </head>
-
 <body>
   <canvas id="bg"></canvas>
   <div class="particles" id="particles"></div>
@@ -675,9 +683,7 @@
   </audio>
 
   <script>
-    const prefersReducedMotion =
-      window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
+    const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const canvas = document.getElementById('bg');
     const ctx = canvas.getContext('2d');
     const particles = document.getElementById('particles');
@@ -689,8 +695,6 @@
     let W = 0, H = 0, dpr = 1;
     const streaks = [];
     const stars = [];
-
-    let envelopeLocked = false;
 
     function resize() {
       dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -737,10 +741,7 @@
       ctx.fillStyle = 'rgba(2, 2, 4, 0.16)';
       ctx.fillRect(0, 0, W, H);
 
-      const grad = ctx.createRadialGradient(
-        W * 0.5, H * 0.38, 20,
-        W * 0.5, H * 0.38, Math.max(W, H) * 0.6
-      );
+      const grad = ctx.createRadialGradient(W * 0.5, H * 0.38, 20, W * 0.5, H * 0.38, Math.max(W, H) * 0.6);
       grad.addColorStop(0, 'rgba(255, 134, 196, 0.06)');
       grad.addColorStop(0.55, 'rgba(255, 86, 170, 0.025)');
       grad.addColorStop(1, 'rgba(255, 86, 170, 0)');
@@ -757,9 +758,7 @@
         ctx.fill();
       }
 
-      if (!prefersReducedMotion) {
-        if (Math.random() < 0.18) spawnStreak();
-      }
+      if (!prefersReducedMotion && Math.random() < 0.18) spawnStreak();
 
       for (let i = streaks.length - 1; i >= 0; i--) {
         const st = streaks[i];
@@ -822,7 +821,6 @@
       for (let i = 0; i < count; i++) {
         const node = document.createElement('div');
         node.className = type === 'spark' ? 'spark' : 'particle';
-
         const angle = Math.random() * Math.PI * 2;
         const dist = 110 + Math.random() * 120;
         const dx = Math.cos(angle) * dist * (0.45 + Math.random() * 0.8);
@@ -835,7 +833,6 @@
         node.style.height = (type === 'spark' ? size * 2.8 : size) + 'px';
         node.style.opacity = '1';
         node.style.transform = 'translate(-50%, -50%) translate(0px, 0px) scale(1)';
-
         frag.appendChild(node);
         created.push({ node, dx, dy });
       }
@@ -863,14 +860,12 @@
       for (let i = 0; i < count; i++) {
         const node = document.createElement('div');
         node.className = 'particle';
-
         const startX = originX + (Math.random() - 0.5) * 38;
         const startY = originY + (Math.random() - 0.5) * 38;
         const endX = window.innerWidth / 2 + (Math.random() - 0.5) * 12;
         const endY = window.innerHeight / 2 + (Math.random() - 0.5) * 12;
         const controlX = (startX + endX) / 2 + (Math.random() - 0.5) * 180;
         const controlY = (startY + endY) / 2 + (Math.random() - 0.5) * 180;
-
         node.style.left = startX + 'px';
         node.style.top = startY + 'px';
         particles.appendChild(node);
@@ -882,51 +877,33 @@
           { transform: `translate(calc(-50% + ${endX - startX}px), calc(-50% + ${endY - startY}px)) scale(0.7)`, opacity: 0.8 },
           { transform: `translate(calc(-50% + ${endX - startX}px), calc(-50% + ${endY - startY}px)) scale(0.18)`, opacity: 0 }
         ];
-
-        node.animate(keyframes, {
-          duration,
-          easing: 'cubic-bezier(0.16, 0.84, 0.22, 1)',
-          fill: 'forwards',
-          delay: i * 3
-        });
-
+        node.animate(keyframes, { duration, easing: 'cubic-bezier(0.16, 0.84, 0.22, 1)', fill: 'forwards', delay: i * 3 });
         setTimeout(() => node.remove(), duration + 380);
       }
-
       setTimeout(onDone, 1300);
     }
 
     function showHeart() {
       textWrap.innerHTML = '';
-
       const holder = document.createElement('div');
-      holder.style.display = 'grid';
-      holder.style.placeItems = 'center';
-      holder.style.gap = '12px';
-      holder.style.pointerEvents = 'auto';
+      holder.className = 'scene-block';
+      holder.innerHTML = `
+        <button class="heart-shell" type="button" aria-label="Открыть сердце">
+          <span class="heart"></span>
+        </button>
+        <div class="hint show">нажми сюда</div>
+      `;
+      textWrap.appendChild(holder);
 
-      const shell = document.createElement('div');
-      shell.className = 'heart-shell';
-      shell.innerHTML = '<div class="heart"></div>';
-
-      const fire = () => {
-        if (shell.dataset.bursting === '1') return;
-        shell.dataset.bursting = '1';
+      const shell = holder.querySelector('.heart-shell');
+      const activate = () => {
+        if (shell.dataset.used === '1') return;
+        shell.dataset.used = '1';
         burstHeart(shell);
       };
 
-      shell.addEventListener('pointerdown', (e) => {
-        e.preventDefault();
-        fire();
-      }, { once: true });
-
-      shell.addEventListener('click', (e) => {
-        e.preventDefault();
-        fire();
-      }, { once: true });
-
-      holder.appendChild(shell);
-      textWrap.appendChild(holder);
+      shell.addEventListener('pointerdown', activate, { once: true });
+      shell.addEventListener('click', activate, { once: true });
     }
 
     function burstHeart(shell) {
@@ -937,7 +914,16 @@
       const heart = shell.querySelector('.heart');
       heart.style.transform = 'rotate(45deg) scale(0.9)';
       heart.style.opacity = '0';
-      heart.style.filter = 'blur(1px)';
+
+      shell.animate([
+        { transform: 'scale(1) rotate(0deg)', opacity: 1 },
+        { transform: 'scale(0.72) rotate(-6deg)', opacity: 0.85, offset: 0.5 },
+        { transform: 'scale(0.08) rotate(18deg)', opacity: 0 }
+      ], {
+        duration: 620,
+        easing: 'cubic-bezier(0.18, 0.88, 0.22, 1)',
+        fill: 'forwards'
+      });
 
       makeParticleBurst(x, y, 44, 7.5, 4, 8, 980, 'dot');
       makeSwirlToCenter(x, y, () => {
@@ -948,40 +934,30 @@
     function showDot() {
       textWrap.innerHTML = '';
       const wrap = document.createElement('div');
-      wrap.style.display = 'grid';
-      wrap.style.placeItems = 'center';
-      wrap.style.gap = '18px';
-      wrap.style.pointerEvents = 'auto';
-
-      const dot = document.createElement('div');
-      dot.className = 'dot';
+      wrap.className = 'scene-block';
 
       const hint = document.createElement('div');
       hint.className = 'hint show';
       hint.textContent = 'нажми сюда';
 
-      const arrow = document.createElement('div');
-      arrow.className = 'arrow-wrap';
-      arrow.innerHTML = `
-        <div class="arrow-label">вытяни</div>
-        <div class="arrow-line"></div>
-      `;
+      const dot = document.createElement('div');
+      dot.className = 'dot';
 
-      const fire = () => {
-        if (dot.dataset.bursting === '1') return;
-        dot.dataset.bursting = '1';
+      const arrow = document.createElement('div');
+      arrow.style.position = 'relative';
+      arrow.style.width = '110px';
+      arrow.style.height = '20px';
+      arrow.style.marginTop = '2px';
+      arrow.innerHTML = '<div class="arrow-line"><div class="arrow-tip"></div></div>';
+
+      const activate = () => {
+        if (dot.dataset.used === '1') return;
+        dot.dataset.used = '1';
         explodeDot(dot);
       };
 
-      dot.addEventListener('pointerdown', (e) => {
-        e.preventDefault();
-        fire();
-      }, { once: true });
-
-      dot.addEventListener('click', (e) => {
-        e.preventDefault();
-        fire();
-      }, { once: true });
+      dot.addEventListener('pointerdown', activate, { once: true });
+      dot.addEventListener('click', activate, { once: true });
 
       wrap.appendChild(hint);
       wrap.appendChild(dot);
@@ -993,7 +969,6 @@
       const rect = dot.getBoundingClientRect();
       const x = rect.left + rect.width / 2;
       const y = rect.top + rect.height / 2;
-
       dot.style.transform = 'scale(0.35)';
       dot.style.opacity = '0';
       makeParticleBurst(x, y, 66, 9.5, 3, 7, 1050, 'spark');
@@ -1002,246 +977,261 @@
 
     function showEnvelope() {
       textWrap.innerHTML = '';
-
       envelopeStage.innerHTML = `
-        <div class="envelope-ui">
-          <div class="title">вытяни</div>
-          <div class="arrow">
-            <div class="arrow-line" style="position:absolute; left:50%; top:0; width:2px; height:42px; transform:translateX(-50%);"></div>
+        <div class="envelope-ui" id="envelopeUI">
+          <div class="pull-hint" id="pullHint">
+            <span>вытяни</span>
+            <div class="pull-arrow"></div>
           </div>
-        </div>
 
-        <div class="envelope-shell" id="envelopeShell">
-          <div class="envelope-back"></div>
-          <div class="envelope-base"></div>
-          <div class="envelope-side-left"></div>
-          <div class="envelope-side-right"></div>
+          <div class="envelope-shell" id="envelopeShell">
+            <div class="envelope-shadow"></div>
+            <div class="envelope-back"></div>
+            <div class="envelope-inner"></div>
 
-          <div class="paper" id="paper">
-            <div class="paper-handle"></div>
-            <div class="paper-grip">тянуть вверх</div>
-            <div class="paper-content" id="paperContent">
-поздравляю тебя,
-моя любовь,
-с 7 месяцами отношений
+            <div class="paper" id="paper">
+              <div class="paper-handle"></div>
+              <div class="paper-grip">тянуть вверх</div>
+              <div class="paper-content">
+                <div class="paper-title">для тебя</div>
+                <div class="paper-body">
+                  Ты — моё тихое счастье, мой самый тёплый дом и моя любимая улыбка.
+                  Спасибо за каждый день рядом. Я люблю тебя всё сильнее.
+                </div>
+              </div>
             </div>
-          </div>
 
-          <div class="envelope-front"></div>
-          <div class="envelope-flap" id="flap"></div>
-          <div class="envelope-seal" id="seal"></div>
+            <div class="envelope-front"></div>
+            <div class="envelope-flap" id="flap"></div>
+            <div class="envelope-seal" id="seal"></div>
+          </div>
         </div>
       `;
-
-      envelopeStage.classList.add('visible');
+      envelopeStage.style.opacity = '1';
+      envelopeStage.style.transform = 'translateY(0)';
 
       const shell = document.getElementById('envelopeShell');
       const flap = document.getElementById('flap');
       const seal = document.getElementById('seal');
       const paper = document.getElementById('paper');
-      const paperContent = document.getElementById('paperContent');
 
       let opened = false;
-      let extracting = false;
-      let dragged = false;
-
       let dragging = false;
+      let extracting = false;
+      let extracted = false;
       let startY = 0;
-      let startTranslate = 38;
-      let currentTranslate = 38;
-      let paperTopLimit = -92;
-      let paperBottomLimit = 38;
+      let startTranslate = 42;
+      let currentTranslate = 42;
+      const paperTopLimit = -78;
+      const paperBottomLimit = 42;
 
-      paper.style.transform = `translateY(${currentTranslate}%)`;
+      function clamp(v, min, max) {
+        return Math.max(min, Math.min(max, v));
+      }
 
-      const openEnvelope = () => {
-        if (opened || extracting) return;
+      function setPaperTranslate(percent) {
+        currentTranslate = clamp(percent, paperTopLimit, paperBottomLimit);
+        const tilt = (42 - currentTranslate) * 0.05;
+        paper.style.transform = `translateY(${currentTranslate}%) rotate(${tilt}deg)`;
+      }
+
+      setPaperTranslate(currentTranslate);
+
+      function openEnvelope() {
+        if (opened) return;
         opened = true;
+        shell.classList.add('open');
         flap.classList.add('open');
         seal.classList.add('gone');
-        shell.classList.add('paper-ready');
-
+        paper.classList.add('paper-ready');
         paper.animate([
-          { transform: `translateY(${currentTranslate}%)` },
-          { transform: 'translateY(31%)' }
+          { transform: 'translateY(42%) rotate(0deg)' },
+          { transform: 'translateY(35%) rotate(-0.5deg)' }
         ], {
-          duration: 650,
+          duration: 620,
           easing: 'cubic-bezier(0.16, 0.84, 0.22, 1)',
           fill: 'forwards'
         });
+        currentTranslate = 35;
+      }
 
-        currentTranslate = 31;
-        paper.style.transform = `translateY(${currentTranslate}%)`;
-      };
+      function burstEnvelope(cx, cy) {
+        makeParticleBurst(cx, cy, 56, 8.2, 3, 7, 900, 'spark');
+        makeParticleBurst(cx, cy, 26, 5.5, 3, 6, 840, 'dot');
+      }
 
-      const setPaperTranslate = (percent) => {
-        currentTranslate = Math.max(paperTopLimit, Math.min(paperBottomLimit, percent));
-        paper.style.transform = `translateY(${currentTranslate}%)`;
-      };
-
-      const flashPulse = () => {
-        paper.animate([
-          { transform: `translateY(${currentTranslate}%) scale(1)` },
-          { transform: `translateY(${currentTranslate - 1.6}%) scale(1.008)` },
-          { transform: `translateY(${currentTranslate}%) scale(1)` }
+      function finalizeExtraction(floatingPaper, target) {
+        floatingPaper.animate([
+          { transform: 'translate(0px, 0px) scale(1)', opacity: 1 },
+          { transform: `translate(${target.dx * 0.84}px, ${target.dy * 0.84}px) scale(${target.scale * 0.96})`, opacity: 0.99, offset: 0.72 },
+          { transform: `translate(${target.dx}px, ${target.dy}px) scale(${target.scale})`, opacity: 1 }
         ], {
-          duration: 220,
-          easing: 'ease-out'
-        });
-      };
+          duration: 1120,
+          easing: 'cubic-bezier(0.16, 0.84, 0.22, 1)',
+          fill: 'forwards'
+        }).onfinish = () => {
+          floatingPaper.classList.add('paper-center');
+          floatingPaper.style.left = target.left + 'px';
+          floatingPaper.style.top = target.top + 'px';
+          floatingPaper.style.width = target.width + 'px';
+          floatingPaper.style.height = target.height + 'px';
+          floatingPaper.style.transform = 'none';
+          floatingPaper.style.transformOrigin = 'top left';
+        };
+      }
 
-      const focusPaper = () => {
-        const rect = paper.getBoundingClientRect();
-        const targetW = Math.min(window.innerWidth * 0.9, 520);
-        const ratio = rect.height / rect.width;
-        const targetH = Math.min(window.innerHeight * 0.76, targetW * ratio);
+      function startExtraction() {
+        if (extracting || extracted) return;
+        extracting = true;
+        dragging = false;
+        extracted = true;
 
-        paper.classList.add('centered');
-        paper.style.position = 'fixed';
-        paper.style.left = rect.left + 'px';
-        paper.style.top = rect.top + 'px';
-        paper.style.width = rect.width + 'px';
-        paper.style.height = rect.height + 'px';
-        paper.style.bottom = 'auto';
-        paper.style.right = 'auto';
-        paper.style.margin = '0';
-        paper.style.zIndex = '50';
-        paper.style.transform = 'none';
+        const shellRect = shell.getBoundingClientRect();
+        const paperRect = paper.getBoundingClientRect();
+
+        const targetWidth = Math.min(window.innerWidth * 0.88, 560);
+        const scale = targetWidth / paperRect.width;
+        const targetHeight = paperRect.height * scale;
+        const targetLeft = (window.innerWidth - targetWidth) / 2;
+        const targetTop = (window.innerHeight - targetHeight) / 2;
+
+        const floatingPaper = paper.cloneNode(true);
+        floatingPaper.id = 'paper-floating';
+        floatingPaper.classList.add('paper-floating');
+        floatingPaper.style.left = paperRect.left + 'px';
+        floatingPaper.style.top = paperRect.top + 'px';
+        floatingPaper.style.width = paperRect.width + 'px';
+        floatingPaper.style.height = paperRect.height + 'px';
+        floatingPaper.style.transform = 'translate(0px, 0px) scale(1)';
+        floatingPaper.style.opacity = '1';
+        floatingPaper.style.pointerEvents = 'none';
+        floatingPaper.style.transformOrigin = 'top left';
+        floatingPaper.style.zIndex = '30';
+        document.body.appendChild(floatingPaper);
+
+        paper.style.opacity = '0';
+        paper.style.pointerEvents = 'none';
+
+        openEnvelope();
+
+        const dx = targetLeft - paperRect.left;
+        const dy = targetTop - paperRect.top;
+        const burstX = shellRect.left + shellRect.width / 2;
+        const burstY = shellRect.top + shellRect.height / 2;
 
         requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            paper.style.left = (window.innerWidth - targetW) / 2 + 'px';
-            paper.style.top = (window.innerHeight - targetH) / 2 + 'px';
-            paper.style.width = targetW + 'px';
-            paper.style.height = targetH + 'px';
-            paper.style.boxShadow = '0 30px 70px rgba(0,0,0,0.28), 0 0 0 1px rgba(255,255,255,0.12), 0 0 42px rgba(255, 165, 212, 0.12)';
-          });
+          setTimeout(() => {
+            finalizeExtraction(floatingPaper, {
+              left: targetLeft,
+              top: targetTop,
+              width: targetWidth,
+              height: targetHeight,
+              scale,
+              dx,
+              dy
+            });
+          }, 90);
         });
-      };
 
-      const explodeEnvelope = () => {
-        const rect = shell.getBoundingClientRect();
-        const x = rect.left + rect.width / 2;
-        const y = rect.top + rect.height / 2;
+        setTimeout(() => {
+          flap.animate([
+            { transform: 'rotateX(-174deg) translateY(-2px)' },
+            { transform: 'rotateX(0deg) translateY(0)' }
+          ], {
+            duration: 360,
+            easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)',
+            fill: 'forwards'
+          });
+        }, 70);
 
-        makeParticleBurst(x, y, 52, 7.8, 3, 8, 760, 'dot');
-        makeParticleBurst(x, y, 30, 9.0, 2, 6, 860, 'spark');
+        setTimeout(() => {
+          burstEnvelope(burstX, burstY);
+        }, 430);
 
         shell.animate([
-          { transform: 'translateY(12px) scale(1) rotate(0deg)', opacity: 1, filter: 'blur(0px)' },
-          { transform: 'translateY(4px) scale(1.02) rotate(-1deg)', opacity: 0.95 },
-          { transform: 'translateY(12px) scale(0.12) rotate(-8deg)', opacity: 0 }
+          { transform: 'translateY(8px) scale(1)', opacity: 1 },
+          { transform: 'translateY(8px) scale(0.98)', opacity: 1, offset: 0.24 },
+          { transform: 'translateY(8px) scale(0.18) rotate(10deg)', opacity: 0 }
         ], {
           duration: 760,
           easing: 'cubic-bezier(0.16, 0.84, 0.22, 1)',
           fill: 'forwards'
         });
 
-        envelopeStage.style.pointerEvents = 'none';
         setTimeout(() => {
-          shell.style.display = 'none';
-          envelopeStage.style.pointerEvents = 'none';
-        }, 760);
-      };
-
-      const finishExtraction = () => {
-        if (extracting) return;
-        extracting = true;
-        dragging = false;
-        dragged = true;
-        paper.style.pointerEvents = 'none';
-
-        paper.animate([
-          { transform: `translateY(${currentTranslate}%) scale(1)` },
-          { transform: 'translateY(-4%) scale(1.01)' }
-        ], {
-          duration: 180,
-          easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)',
-          fill: 'forwards'
-        }).finished.then(() => {
-          paper.style.transform = 'translateY(-4%) scale(1.01)';
-
-          paper.animate([
-            { transform: 'translateY(-4%) scale(1.01)' },
-            { transform: 'translateY(-125%) scale(1.03)', opacity: 1 }
-          ], {
-            duration: 760,
-            easing: 'cubic-bezier(0.12, 0.86, 0.16, 1)',
-            fill: 'forwards'
-          }).finished.then(() => {
-            explodeEnvelope();
-            focusPaper();
-          });
-        });
-      };
-
-      flap.addEventListener('pointerdown', (e) => {
-        e.stopPropagation();
-        openEnvelope();
-      });
+          shell.remove();
+          envelopeStage.style.opacity = '0';
+          envelopeStage.style.transform = 'translateY(14px)';
+        }, 820);
+      }
 
       paper.addEventListener('pointerdown', (e) => {
-        if (extracting) return;
+        if (extracted || extracting) return;
         if (!opened) openEnvelope();
         dragging = true;
-        dragged = false;
         startY = e.clientY;
         startTranslate = currentTranslate;
-        paper.setPointerCapture?.(e.pointerId);
-        flashPulse();
+        paper.classList.add('grabbing');
+        try { paper.setPointerCapture(e.pointerId); } catch (_) {}
       });
 
       paper.addEventListener('pointermove', (e) => {
-        if (!dragging || extracting) return;
+        if (!dragging || extracted || extracting) return;
         const deltaPx = startY - e.clientY;
-        const envelopeHeight = shell.getBoundingClientRect().height;
+        const envelopeHeight = shell.getBoundingClientRect().height || 1;
         const deltaPercent = (deltaPx / envelopeHeight) * 100;
+        const next = startTranslate - deltaPercent;
 
-        dragged = true;
-        setPaperTranslate(startTranslate + deltaPercent);
+        setPaperTranslate(next);
 
-        if (currentTranslate < 18) {
-          finishExtraction();
+        if (deltaPx > 14) {
+          startExtraction();
         }
       });
 
-      const releasePaper = () => {
-        if (!dragging || extracting) return;
-        dragging = false;
-
-        if (currentTranslate < 24 || dragged) {
-          finishExtraction();
-        } else {
-          paper.animate([
-            { transform: `translateY(${currentTranslate}%) scale(1)` },
-            { transform: 'translateY(31%) scale(1)' }
-          ], {
-            duration: 420,
-            easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)',
-            fill: 'forwards'
-          });
-          currentTranslate = 31;
-          paper.style.transform = `translateY(${currentTranslate}%)`;
-        }
-      };
-
-      paper.addEventListener('pointerup', releasePaper);
-      paper.addEventListener('pointercancel', releasePaper);
-      paper.addEventListener('pointerleave', releasePaper);
-
-      paper.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (!opened) {
-          openEnvelope();
+      function finishDrag() {
+        if (!dragging || extracted || extracting) {
+          paper.classList.remove('grabbing');
           return;
         }
-        if (!extracting) finishExtraction();
+        dragging = false;
+        paper.classList.remove('grabbing');
+
+        if (currentTranslate < 18) {
+          startExtraction();
+          return;
+        }
+
+        paper.animate([
+          { transform: `translateY(${currentTranslate}%) rotate(${(42 - currentTranslate) * 0.05}deg)` },
+          { transform: 'translateY(35%) rotate(-0.3deg)' }
+        ], {
+          duration: 420,
+          easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)',
+          fill: 'forwards'
+        }).onfinish = () => {
+          if (!extracting && !extracted) setPaperTranslate(35);
+        };
+      }
+
+      paper.addEventListener('pointerup', finishDrag);
+      paper.addEventListener('pointercancel', finishDrag);
+      paper.addEventListener('pointerleave', finishDrag);
+
+      flap.addEventListener('pointerdown', (e) => {
+        e.stopPropagation();
+        if (extracting || extracted) return;
+        openEnvelope();
       });
 
       shell.addEventListener('pointerdown', (e) => {
-        if (!opened || extracting) return;
+        if (extracting || extracted) return;
         if (e.target === paper || paper.contains(e.target)) return;
         openEnvelope();
+      });
+
+      shell.addEventListener('click', () => {
+        if (!opened) openEnvelope();
       });
 
       envelopeStage.animate([
@@ -1254,7 +1244,6 @@
       });
     }
 
-    // Intro
     requestAnimationFrame(showTextSequence);
 
     async function tryPlayMusic() {
@@ -1264,9 +1253,7 @@
         setTimeout(() => {
           musicBtn.style.opacity = '0.18';
         }, 1200);
-      } catch (_) {
-        // autoplay restrictions are normal; user can tap again
-      }
+      } catch (_) {}
     }
 
     musicBtn.addEventListener('pointerdown', tryPlayMusic);
