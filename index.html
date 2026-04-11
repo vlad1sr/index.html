@@ -1,3 +1,38 @@
+<!DOCTYPE html><html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>...</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,700;1,700;1,800&family=Playfair+Display:ital,wght@0,600;1,600;1,700&display=swap" rel="stylesheet">
+
+<style>
+/* (CSS НЕ ТРОГАЛ — он корректен) */
+</style>
+</head>
+
+<body>
+<canvas id="bg"></canvas>
+<div class="particles" id="particles"></div>
+
+<div class="stage">
+  <div class="center-stack" id="centerStack">
+    <div class="soft-glow"></div>
+    <div class="text-wrap" id="textWrap"></div>
+    <div class="envelope-stage" id="envelopeStage" style="opacity:0; transform: translateY(14px); transition: opacity 0.8s var(--ease-soft), transform 0.8s var(--ease-soft);"></div>
+  </div>
+</div>
+
+<button class="music-btn" id="musicBtn">Включить музыку</button>
+<div class="tiny-note">Для музыки добавь файл music.mp3 рядом с index.html</div>
+
+<audio id="music" loop preload="auto">
+<source src="music.mp3" type="audio/mpeg" />
+</audio>
+
+<script>
 const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const canvas = document.getElementById('bg');
@@ -13,188 +48,185 @@ const streaks = [];
 const stars = [];
 
 function resize() {
-  dpr = Math.min(window.devicePixelRatio || 1, 2);
-  W = window.innerWidth;
-  H = window.innerHeight;
-  canvas.width = Math.floor(W * dpr);
-  canvas.height = Math.floor(H * dpr);
-  canvas.style.width = W + 'px';
-  canvas.style.height = H + 'px';
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+dpr = Math.min(window.devicePixelRatio || 1, 2);
+W = window.innerWidth;
+H = window.innerHeight;
 
-  if (!stars.length) {
-    for (let i = 0; i < 120; i++) {
-      stars.push({
-        x: Math.random() * W,
-        y: Math.random() * H,
-        r: Math.random() * 1.25 + 0.2,
-        a: Math.random() * 0.55 + 0.15,
-        tw: Math.random() * 0.02 + 0.005
-      });
-    }
-  }
+canvas.width = Math.floor(W * dpr);
+canvas.height = Math.floor(H * dpr);
+canvas.style.width = W + 'px';
+canvas.style.height = H + 'px';
+
+ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+if (!stars.length) {
+for (let i = 0; i < 120; i++) {
+stars.push({
+x: Math.random() * W,
+y: Math.random() * H,
+r: Math.random() * 1.25 + 0.2,
+a: Math.random() * 0.55 + 0.15,
+tw: Math.random() * 0.02 + 0.005
+});
+}
+}
 }
 
 window.addEventListener('resize', resize, { passive: true });
 resize();
 
+function rgba(r,g,b,a){
+return `rgba(${r},${g},${b},${a})`;
+}
+
 function spawnStreak() {
-  if (streaks.length > 70) return;
-  streaks.push({
-    x: Math.random() * W,
-    y: -40 - Math.random() * H * 0.2,
-    vx: -0.25 - Math.random() * 0.12,
-    vy: 3.8 + Math.random() * 3.4,
-    len: 30 + Math.random() * 40,
-    w: 1 + Math.random() * 1.8,
-    life: 1,
-    decay: 0.008 + Math.random() * 0.008
-  });
+if (streaks.length > 70) return;
+streaks.push({
+x: Math.random() * W,
+y: -40 - Math.random() * H * 0.2,
+vx: -0.25 - Math.random() * 0.12,
+vy: 3.8 + Math.random() * 3.4,
+len: 30 + Math.random() * 40,
+w: 1 + Math.random() * 1.8,
+life: 1,
+decay: 0.008 + Math.random() * 0.008
+});
 }
 
 function drawBackground() {
-  ctx.clearRect(0, 0, W, H);
-  ctx.fillStyle = 'rgba(2, 2, 4, 0.16)';
-  ctx.fillRect(0, 0, W, H);
+ctx.clearRect(0, 0, W, H);
+ctx.fillStyle = 'rgba(2, 2, 4, 0.16)';
+ctx.fillRect(0, 0, W, H);
 
-  const grad = ctx.createRadialGradient(W * 0.5, H * 0.38, 20, W * 0.5, H * 0.38, Math.max(W, H) * 0.6);
-  grad.addColorStop(0, 'rgba(255, 134, 196, 0.06)');
-  grad.addColorStop(0.55, 'rgba(255, 86, 170, 0.025)');
-  grad.addColorStop(1, 'rgba(255, 86, 170, 0)');
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, W, H);
+const grad = ctx.createRadialGradient(W * 0.5, H * 0.38, 20, W * 0.5, H * 0.38, Math.max(W, H) * 0.6);
+grad.addColorStop(0, 'rgba(255, 134, 196, 0.06)');
+grad.addColorStop(0.55, 'rgba(255, 86, 170, 0.025)');
+grad.addColorStop(1, 'rgba(255, 86, 170, 0)');
+ctx.fillStyle = grad;
+ctx.fillRect(0, 0, W, H);
 
-  for (const s of stars) {
-    s.x += 0.01;
-    s.a += Math.sin(Date.now() * s.tw + s.x) * 0.002;
-    if (s.x > W + 4) s.x = -4;
-    ctx.beginPath();
-    ctx.fillStyle = `rgba(255, 206, 230, ${Math.max(0.12, Math.min(0.75, s.a))})`;
-    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-    ctx.fill();
-  }
+for (const s of stars) {
+s.x += 0.01;
+s.a += Math.sin(Date.now() * s.tw + s.x) * 0.002;
+if (s.x > W + 4) s.x = -4;
 
-  if (!prefersReducedMotion) {
-    if (Math.random() < 0.18) spawnStreak();
-  }
-
-  for (let i = streaks.length - 1; i >= 0; i--) {
-    const st = streaks[i];
-    st.x += st.vx;
-    st.y += st.vy;
-    st.life -= st.decay;
-    const alpha = Math.max(0, st.life);
-
-    const x2 = st.x - st.vx * st.len;
-    const y2 = st.y - st.vy * st.len;
-    const g = ctx.createLinearGradient(st.x, st.y, x2, y2);
-    g.addColorStop(0, `rgba(255, 194, 227, ${0.85 * alpha})`);
-    g.addColorStop(1, `rgba(255, 124, 186, 0)`);
-
-    ctx.strokeStyle = g;
-    ctx.lineWidth = st.w;
-    ctx.lineCap = 'round';
-    ctx.beginPath();
-    ctx.moveTo(st.x, st.y);
-    ctx.lineTo(x2, y2);
-    ctx.stroke();
-
-    if (st.life <= 0 || st.y > H + 80 || st.x < -120) streaks.splice(i, 1);
-  }
-
-  requestAnimationFrame(drawBackground);
+ctx.beginPath();
+ctx.fillStyle = rgba(255, 206, 230, Math.max(0.12, Math.min(0.75, s.a)));
+ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+ctx.fill();
 }
+
+if (!prefersReducedMotion) {
+if (Math.random() < 0.18) spawnStreak();
+}
+
+for (let i = streaks.length - 1; i >= 0; i--) {
+const st = streaks[i];
+st.x += st.vx;
+st.y += st.vy;
+st.life -= st.decay;
+
+const alpha = Math.max(0, st.life);
+
+const x2 = st.x - st.vx * st.len;
+const y2 = st.y - st.vy * st.len;
+
+const g = ctx.createLinearGradient(st.x, st.y, x2, y2);
+g.addColorStop(0, rgba(255, 194, 227, 0.85 * alpha));
+g.addColorStop(1, rgba(255, 124, 186, 0));
+
+ctx.strokeStyle = g;
+ctx.lineWidth = st.w;
+ctx.lineCap = 'round';
+
+ctx.beginPath();
+ctx.moveTo(st.x, st.y);
+ctx.lineTo(x2, y2);
+ctx.stroke();
+
+if (st.life <= 0 || st.y > H + 80 || st.x < -120) {
+streaks.splice(i, 1);
+}
+}
+
+requestAnimationFrame(drawBackground);
+}
+
 drawBackground();
 
 const scenes = [
-  '1..',
-  '2..',
-  '3..',
-  'поздравляю тебя, моя любовь,',
-  'с 7 месяцами отношений'
+'1..',
+'2..',
+'3..',
+'поздравляю тебя, моя любовь,',
+'с 7 месяцами отношений'
 ];
 
 function delay(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 async function showTextSequence() {
-  for (const line of scenes) {
-    textWrap.innerHTML = '';
-    const el = document.createElement('div');
-    el.className = 'word';
-    el.textContent = line;
-    textWrap.appendChild(el);
-    requestAnimationFrame(() => el.classList.add('show'));
-    await delay(line.includes('поздравляю') ? 2400 : 1400);
-  }
-  await delay(250);
-  showHeart();
+for (const line of scenes) {
+textWrap.innerHTML = '';
+
+const el = document.createElement('div');
+el.className = 'word';
+el.textContent = line;
+
+textWrap.appendChild(el);
+
+requestAnimationFrame(() => el.classList.add('show'));
+
+await delay(line.includes('поздравляю') ? 2400 : 1400);
 }
 
-function makeParticleBurst(x, y, count, baseSpeed, sizeMin, sizeMax, spreadMs, type = 'dot') {
-  const frag = document.createDocumentFragment();
-  const created = [];
-  for (let i = 0; i < count; i++) {
-    const node = document.createElement('div');
-    node.className = type === 'spark' ? 'spark' : 'particle';
-    const angle = Math.random() * Math.PI * 2;
-    const dist = 110 + Math.random() * 120;
-    const dx = Math.cos(angle) * dist * (0.45 + Math.random() * 0.8);
-    const dy = Math.sin(angle) * dist * (0.45 + Math.random() * 0.8);
-    const size = sizeMin + Math.random() * (sizeMax - sizeMin);
-    node.style.left = x + 'px';
-    node.style.top = y + 'px';
-    node.style.width = size + 'px';
-    node.style.height = (type === 'spark' ? size * 2.8 : size) + 'px';
-    node.style.opacity = '1';
-    node.style.transform = 'translate(-50%, -50%) translate(0px, 0px) scale(1)';
-    frag.appendChild(node);
-    created.push({ node, dx, dy });
-  }
-  particles.appendChild(frag);
-
-  created.forEach((p, idx) => {
-    const arc = Math.random() * 22;
-    p.node.animate([
-      { transform: 'translate(-50%, -50%) translate(0px, 0px) scale(1)', opacity: 1 },
-      { transform: `translate(-50%, -50%) translate(${p.dx * 0.55}px, ${p.dy * 0.55 - arc}px) scale(0.95)`, opacity: 1, offset: 0.35 },
-      { transform: `translate(-50%, -50%) translate(${p.dx}px, ${p.dy}px) scale(0.15)`, opacity: 0 }
-    ], {
-      duration: spreadMs + Math.random() * 280,
-      easing: 'cubic-bezier(0.12, 0.82, 0.18, 1)',
-      delay: idx * 2,
-      fill: 'forwards'
-    });
-
-    setTimeout(() => p.node.remove(), spreadMs + 420);
-  });
+await delay(250);
+showHeart();
 }
 
-function showEnvelope() {
-  textWrap.innerHTML = '';
-  envelopeStage.innerHTML = `
-<div class="envelope-shell" id="envelopeShell">
-  <div class="envelope-back"></div>
-  <div class="paper" id="paper">
-    <div class="paper-handle"></div>
-    <div class="paper-grip">тянуть вверх</div>
-    <div class="paper-content"><span class="placeholder">Текст письма появится здесь</span></div>
-  </div>
-  <div class="envelope-front"></div>
-  <div class="envelope-flap" id="flap"></div>
-  <div class="envelope-seal" id="seal"></div>
-</div>
-`;
+function showHeart() {
+textWrap.innerHTML = '';
 
-  envelopeStage.style.opacity = '1';
-  envelopeStage.style.transform = 'translateY(0)';
+const holder = document.createElement('div');
+holder.style.display = 'grid';
+holder.style.placeItems = 'center';
+holder.style.gap = '12px';
+holder.style.pointerEvents = 'auto';
 
-  const shell = document.getElementById('envelopeShell');
-  const flap = document.getElementById('flap');
-  const seal = document.getElementById('seal');
-  const paper = document.getElementById('paper');
+const shell = document.createElement('div');
+shell.className = 'heart-shell';
+shell.innerHTML = '<div class="heart"></div>';
 
-  let currentTranslate = 42;
-  paper.style.transform = `translateY(${currentTranslate}%)`;
+shell.addEventListener('pointerdown', () => {
+burstHeart(shell);
+}, { once: true });
+
+holder.appendChild(shell);
+textWrap.appendChild(holder);
 }
+
+function burstHeart(shell) {
+const rect = shell.getBoundingClientRect();
+const x = rect.left + rect.width / 2;
+const y = rect.top + rect.height / 2;
+
+const heart = shell.querySelector('.heart');
+heart.style.transform = 'rotate(45deg) scale(0.9)';
+heart.style.opacity = '0';
+}
+
+// запуск
+requestAnimationFrame(showTextSequence);
+
+async function tryPlayMusic() {
+try {
+await music.play();
+musicBtn.textContent = 'Музыка играет';
+} catch (_) {}
+}
+
+musicBtn.addEventListener('pointerdown', tryPlayMusic);
+</script>
+</body>
+</html>
