@@ -1,238 +1,890 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Love</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-
-<style>
-:root {
-  --ease: cubic-bezier(.22,.9,.3,1);
-}
-
-body {
-  margin: 0;
-  font-family: 'Inter', sans-serif;
-  overflow: hidden;
-  background: #020204;
-}
-
-/* ===== CANVAS ===== */
-canvas {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-}
-
-/* ===== CENTER ===== */
-.center {
-  position: relative;
-  z-index: 2;
-  height: 100vh;
-  display: grid;
-  place-items: center;
-}
-
-/* ===== ENVELOPE ===== */
-.envelope {
-  position: relative;
-  width: 320px;
-  height: 200px;
-  cursor: pointer;
-  perspective: 1200px;
-}
-
-/* base */
-.env-body {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: #f8f8f8;
-  border-radius: 8px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-  overflow: hidden;
-}
-
-/* flap */
-.flap {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(#ffffff, #ececec);
-  clip-path: polygon(0 0, 100% 0, 50% 60%);
-  transform-origin: top;
-  transition: transform 1s var(--ease);
-  z-index: 3;
-}
-
-/* open */
-.envelope.open .flap {
-  transform: rotateX(180deg);
-}
-
-/* ===== LETTER ===== */
-.letter {
-  position: absolute;
-  width: 90%;
-  height: 140px;
-  background: white;
-  left: 5%;
-  bottom: -20px;
-  border-radius: 6px;
-  padding: 20px;
-  box-sizing: border-box;
-  transform: translateY(0);
-  transition: transform 1s var(--ease);
-  z-index: 2;
-}
-
-.envelope.open .letter {
-  transform: translateY(-80px);
-}
-
-/* pulled */
-.letter.pulled {
-  transform: translateY(-250px) scale(1.2);
-  z-index: 10;
-}
-
-/* ===== TEXT ===== */
-h1 {
-  margin: 0;
-  font-size: 28px;
-  font-weight: 800;
-}
-
-p {
-  font-size: 15px;
-  line-height: 1.5;
-  opacity: 0.7;
-}
-
-/* ===== EXPLOSION ===== */
-.particle {
-  position: fixed;
-  width: 6px;
-  height: 6px;
-  background: pink;
-  border-radius: 50%;
-  pointer-events: none;
-  animation: explode 1s forwards;
-}
-
-@keyframes explode {
-  to {
-    transform: translate(var(--x), var(--y)) scale(0);
-    opacity: 0;
-  }
-}
-
-</style>
-</head>
-
-<body>
-
-<canvas id="bg"></canvas>
-
-<div class="center">
-
-  <div class="envelope" id="env">
-    <div class="env-body"></div>
-    <div class="flap"></div>
-
-    <div class="letter" id="letter">
-      <h1>My Love</h1>
-      <p>
-        Ты — моё спокойствие в хаосе.  
-        Ты — моё всё.  
-      </p>
-    </div>
-  </div>
-
-</div>
-
-<script>
-
-/* ===== STAR BACKGROUND ===== */
-const canvas = document.getElementById('bg');
-const ctx = canvas.getContext('2d');
-
-let W, H;
-let stars = [];
-
-function resize() {
-  W = canvas.width = window.innerWidth;
-  H = canvas.height = window.innerHeight;
-
-  stars = Array.from({length:120}, () => ({
-    x: Math.random()*W,
-    y: Math.random()*H,
-    r: Math.random()*1.5,
-    v: Math.random()*0.5
-  }));
-}
-resize();
-window.onresize = resize;
-
-function draw() {
-  ctx.fillStyle = "#020204";
-  ctx.fillRect(0,0,W,H);
-
-  stars.forEach(s=>{
-    s.y += s.v;
-    if(s.y > H) s.y = 0;
-
-    ctx.beginPath();
-    ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
-    ctx.fillStyle = "white";
-    ctx.fill();
-  });
-
-  requestAnimationFrame(draw);
-}
-draw();
-
-/* ===== ENVELOPE LOGIC ===== */
-const env = document.getElementById('env');
-const letter = document.getElementById('letter');
-
-env.addEventListener('click', () => {
-  env.classList.add('open');
-});
-
-/* pull letter */
-letter.addEventListener('click', (e) => {
-  e.stopPropagation();
-
-  letter.classList.add('pulled');
-  explode(e.clientX, e.clientY);
-});
-
-/* ===== EXPLOSION ===== */
-function explode(x, y) {
-  for (let i = 0; i < 40; i++) {
-    const p = document.createElement('div');
-    p.className = 'particle';
-
-    const angle = Math.random() * Math.PI * 2;
-    const dist = 100 + Math.random()*150;
-
-    p.style.left = x + 'px';
-    p.style.top = y + 'px';
-
-    p.style.setProperty('--x', Math.cos(angle)*dist + 'px');
-    p.style.setProperty('--y', Math.sin(angle)*dist + 'px');
-
-    document.body.appendChild(p);
-
-    setTimeout(()=>p.remove(),1000);
-  }
-}
-
-</script>
-
-</body>
+<!DOCTYPE html>  <html lang="ru">    
+<head>    
+    <meta charset="UTF-8">    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
+    <title>Моя Любовь</title>    
+    <link rel="preconnect" href="https://fonts.googleapis.com">    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">  <style>    
+    * {    
+        margin: 0;    
+        padding: 0;    
+        box-sizing: border-box;    
+        -webkit-user-select: none;    
+        user-select: none;    
+        -webkit-touch-callout: none;    
+    }    
+  
+    html, body {    
+        width: 100%;    
+        height: 100%;    
+        overflow: hidden;    
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;    
+        -webkit-font-smoothing: antialiased;    
+    }    
+  
+    body {    
+        background: #000814;    
+        color: white;    
+    }    
+  
+    canvas#bg {    
+        position: fixed;    
+        top: 0;    
+        left: 0;    
+        width: 100%;    
+        height: 100%;    
+        z-index: 1;    
+    }    
+  
+    .container {    
+        position: fixed;    
+        top: 0;    
+        left: 0;    
+        width: 100%;    
+        height: 100%;    
+        display: flex;    
+        flex-direction: column;    
+        justify-content: center;    
+        align-items: center;    
+        z-index: 10;    
+    }    
+  
+    /* ТЕКСТ ЭТАПЫ */    
+    .text-container {    
+        text-align: center;    
+        opacity: 0;    
+        transform: translateY(-20px);    
+        animation: fadeInDown 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;    
+        pointer-events: none;    
+    }    
+  
+    @keyframes fadeInDown {    
+        to {    
+            opacity: 1;    
+            transform: translateY(0);    
+        }    
+    }    
+  
+    .text-container.hide {    
+        animation: fadeOutUp 0.6s ease-out forwards;    
+    }    
+  
+    @keyframes fadeOutUp {    
+        to {    
+            opacity: 0;    
+            transform: translateY(-30px);    
+        }    
+    }    
+  
+    .text-word {    
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif;    
+        font-size: clamp(2rem, 5vw, 3.5rem);    
+        font-weight: 800;    
+        line-height: 1.2;    
+        letter-spacing: -0.5px;    
+        background: linear-gradient(135deg, #ff6b9d 0%, #ffa6c1 100%);    
+        -webkit-background-clip: text;    
+        background-clip: text;    
+        -webkit-text-fill-color: transparent;    
+        text-shadow: 0 0 30px rgba(255, 107, 157, 0.3);    
+        animation: fadeInScale 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);    
+    }    
+  
+    @keyframes fadeInScale {    
+        from {    
+            opacity: 0;    
+            transform: scale(0.9) translateY(10px);    
+        }    
+        to {    
+            opacity: 1;    
+            transform: scale(1) translateY(0);    
+        }    
+    }    
+  
+    /* СЕРДЦЕ */    
+    .heart-container {    
+        position: relative;    
+        width: 150px;    
+        height: 150px;    
+        cursor: pointer;    
+        opacity: 0;    
+        animation: fadeInDown 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s forwards;    
+    }    
+  
+    .heart {    
+        position: relative;    
+        width: 100%;    
+        height: 100%;    
+        animation: heartPulse 1.5s ease-in-out infinite;    
+        filter: drop-shadow(0 0 20px rgba(255, 107, 157, 0.5));    
+    }    
+  
+    .heart::before,    
+    .heart::after {    
+        content: '';    
+        position: absolute;    
+        width: 75px;    
+        height: 120px;    
+        background: linear-gradient(135deg, #ff6b9d, #ff85a8);    
+        border-radius: 75px 75px 0 0;    
+        top: 0;    
+    }    
+  
+    .heart::before {    
+        left: -37.5px;    
+        transform: rotate(-45deg);    
+        transform-origin: 75px 120px;    
+    }    
+  
+    .heart::after {    
+        right: -37.5px;    
+        transform: rotate(45deg);    
+        transform-origin: 0 120px;    
+    }    
+  
+    @keyframes heartPulse {    
+        0%, 100% { transform: scale(1); }    
+        25% { transform: scale(1.08); }    
+        50% { transform: scale(1.15); }    
+        75% { transform: scale(1.08); }    
+    }    
+  
+    /* КАПЛИ ЧАСТИЦ */    
+    .droplet {    
+        position: fixed;    
+        border-radius: 50%;    
+        pointer-events: none;    
+        filter: blur(0.5px) drop-shadow(0 0 8px rgba(255, 107, 157, 0.6));    
+    }    
+  
+    /* ПУЛЬСИРУЮЩАЯ ТОЧКА */    
+    .pulse-point {    
+        position: relative;    
+        width: 20px;    
+        height: 20px;    
+        background: radial-gradient(circle, #ff85a8, #ff6b9d);    
+        border-radius: 50%;    
+        cursor: pointer;    
+        animation: pointPulse 1.2s ease-in-out infinite;    
+        filter: drop-shadow(0 0 15px rgba(255, 107, 157, 0.8));    
+        opacity: 0;    
+        margin-top: 40px;    
+    }    
+  
+    @keyframes pointPulse {    
+        0%, 100% {    
+            transform: scale(1);    
+            filter: drop-shadow(0 0 15px rgba(255, 107, 157, 0.8));    
+        }    
+        50% {    
+            transform: scale(1.3);    
+            filter: drop-shadow(0 0 25px rgba(255, 107, 157, 1));    
+        }    
+    }    
+  
+    .point-label {    
+        position: absolute;    
+        top: -35px;    
+        font-size: 0.9rem;    
+        opacity: 0.7;    
+        animation: float 2s ease-in-out infinite;    
+        white-space: nowrap;    
+        font-weight: 600;    
+    }    
+  
+    @keyframes float {    
+        0%, 100% { transform: translateY(0); }    
+        50% { transform: translateY(-8px); }    
+    }    
+  
+    /* КОНВЕРТ */    
+    .envelope-wrapper {    
+        position: relative;    
+        width: 320px;    
+        height: 240px;    
+        perspective: 1200px;    
+        opacity: 0;    
+        animation: fadeInScale 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.5s forwards;    
+        touch-action: none;    
+    }    
+  
+    .envelope-base {    
+        position: relative;    
+        width: 100%;    
+        height: 100%;    
+        background: linear-gradient(135deg, #e8d5c4 0%, #d4a574 100%);    
+        border-radius: 8px;    
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);    
+        overflow: visible;    
+    }    
+  
+    .envelope-body {    
+        position: absolute;    
+        top: 0;    
+        left: 0;    
+        width: 100%;    
+        height: 100%;    
+        background: linear-gradient(to bottom, #e8d5c4 0%, #d4a574 100%);    
+        border-radius: 8px;    
+        box-shadow: inset 0 -2px 5px rgba(0, 0, 0, 0.1);    
+    }    
+  
+    .envelope-flap {    
+        position: absolute;    
+        top: 0;    
+        left: 0;    
+        width: 100%;    
+        height: 55%;    
+        background: linear-gradient(180deg, #f0e0d0 0%, #e8d5c4 100%);    
+        border-radius: 8px 8px 0 0;    
+        transform-origin: top center;    
+        transform: rotateX(0deg);    
+        transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);    
+        box-shadow:     
+            inset 0 2px 8px rgba(255, 255, 255, 0.3),    
+            0 -5px 15px rgba(0, 0, 0, 0.2);    
+        cursor: grab;    
+        z-index: 10;    
+    }    
+  
+    .envelope-flap.dragging {    
+        cursor: grabbing;    
+    }    
+  
+    .envelope-flap.open {    
+        transform: rotateX(160deg);    
+    }    
+  
+    .letter {    
+        position: absolute;    
+        top: 50px;    
+        left: 50%;    
+        transform: translateX(-50%) translateY(0);    
+        width: 88%;    
+        height: 75%;    
+        background: linear-gradient(135deg, #fffacd 0%, #fff8e7 100%);    
+        border-radius: 6px;    
+        padding: 24px 20px;    
+        box-shadow:     
+            0 15px 40px rgba(0, 0, 0, 0.4),    
+            inset 0 1px 0 rgba(255, 255, 255, 0.8);    
+        overflow: hidden;    
+        z-index: 5;    
+        transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);    
+        cursor: grab;    
+        opacity: 0;    
+    }    
+  
+    .letter.visible {    
+        opacity: 1;    
+    }    
+  
+    .letter.dragging {    
+        cursor: grabbing;    
+    }    
+  
+    .letter h2 {    
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif;    
+        color: #8b6f47;    
+        font-size: 1.3rem;    
+        font-weight: 700;    
+        margin-bottom: 14px;    
+        letter-spacing: -0.3px;    
+    }    
+  
+    .letter p {    
+        color: #6b5d4f;    
+        font-size: 0.95rem;    
+        line-height: 1.7;    
+        margin: 10px 0;    
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif;    
+        font-weight: 500;    
+    }    
+  
+    /* КОНФЕТТИ */    
+    .confetti {    
+        position: fixed;    
+        pointer-events: none;    
+        font-size: 1.5rem;    
+    }    
+  
+    /* ЛОПНУЩИЕ ЧАСТИЦЫ КОНВЕРТА */    
+    .envelope-burst {    
+        position: fixed;    
+        pointer-events: none;    
+        border-radius: 2px;    
+    }    
+  
+    /* КНОПКА МУЗЫКИ */    
+    .music-btn {    
+        position: fixed;    
+        bottom: 30px;    
+        right: 30px;    
+        padding: 12px 24px;    
+        background: linear-gradient(135deg, #ff6b9d, #ff85a8);    
+        color: white;    
+        border: none;    
+        border-radius: 50px;    
+        font-size: 0.95rem;    
+        font-weight: 700;    
+        cursor: pointer;    
+        z-index: 100;    
+        box-shadow: 0 8px 25px rgba(255, 107, 157, 0.4);    
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);    
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif;    
+    }    
+  
+    .music-btn:hover {    
+        transform: translateY(-3px);    
+        box-shadow: 0 12px 35px rgba(255, 107, 157, 0.6);    
+    }    
+  
+    .music-btn:active {    
+        transform: translateY(-1px);    
+    }    
+  
+    @media (max-width: 768px) {    
+        .text-word {    
+            font-size: clamp(1.5rem, 4vw, 2.8rem);    
+        }    
+  
+        .heart-container {    
+            width: 120px;    
+            height: 120px;    
+        }    
+  
+        .envelope-wrapper {    
+            width: 280px;    
+            height: 220px;    
+        }    
+  
+        .music-btn {    
+            bottom: 20px;    
+            right: 20px;    
+            padding: 10px 20px;    
+            font-size: 0.85rem;    
+        }    
+    }    
+</style>  
+  
+</head>    
+<body>    
+    <canvas id="bg"></canvas>    
+    <div class="container" id="container"></div>  <button class="music-btn" id="musicBtn">♪ Музыка</button>    
+<audio id="music" loop preload="auto">    
+    <source src="music.mp3" type="audio/mpeg">    
+</audio>    
+  
+<script>    
+    // ========== CANVAS BACKGROUND (ЗВЕЗДОПАД) ==========    
+    const canvas = document.getElementById('bg');    
+    const ctx = canvas.getContext('2d');    
+        
+    let W = window.innerWidth;    
+    let H = window.innerHeight;    
+        
+    canvas.width = W;    
+    canvas.height = H;    
+  
+    const particles = [];    
+    const stars = [];    
+  
+    // Звёзды    
+    for (let i = 0; i < 150; i++) {    
+        stars.push({    
+            x: Math.random() * W,    
+            y: Math.random() * H,    
+            r: Math.random() * 1.5 + 0.5,    
+            opacity: Math.random() * 0.6 + 0.2,    
+            twinkleSpeed: Math.random() * 0.03 + 0.005,    
+            originalOpacity: Math.random() * 0.6 + 0.2    
+        });    
+    }    
+  
+    class Streak {    
+        constructor() {    
+            this.x = Math.random() * W;    
+            this.y = Math.random() * H * -0.5;    
+            this.vx = (Math.random() - 0.5) * 1.5;    
+            this.vy = Math.random() * 4 + 5;    
+            this.life = 1;    
+            this.decay = 0.008;    
+            this.width = Math.random() * 2 + 0.5;    
+            this.length = Math.random() * 80 + 60;    
+            this.hue = Math.random() * 30 + 310;    
+        }    
+  
+        update() {    
+            this.x += this.vx;    
+            this.y += this.vy;    
+            this.vy += 0.08;    
+            this.life -= this.decay;    
+        }    
+  
+        draw() {    
+            const alpha = Math.max(0, this.life);    
+            const gradient = ctx.createLinearGradient(    
+                this.x, this.y,    
+                this.x - this.vx * this.length,    
+                this.y - this.vy * this.length    
+            );    
+            gradient.addColorStop(0, `hsla(${this.hue}, 100%, 75%, ${0.9 * alpha})`);    
+            gradient.addColorStop(1, `hsla(${this.hue}, 100%, 70%, 0)`);    
+  
+            ctx.strokeStyle = gradient;    
+            ctx.lineWidth = this.width;    
+            ctx.lineCap = 'round';    
+            ctx.lineJoin = 'round';    
+            ctx.beginPath();    
+            ctx.moveTo(this.x, this.y);    
+            ctx.lineTo(    
+                this.x - this.vx * this.length,    
+                this.y - this.vy * this.length    
+            );    
+            ctx.stroke();    
+        }    
+  
+        isAlive() {    
+            return this.life > 0 && this.y < H + 100;    
+        }    
+    }    
+  
+    function animate() {    
+        ctx.fillStyle = 'rgba(0, 8, 20, 0.15)';    
+        ctx.fillRect(0, 0, W, H);    
+  
+        // Звёзды с мерцанием    
+        stars.forEach(star => {    
+            star.opacity = star.originalOpacity + Math.sin(Date.now() * star.twinkleSpeed) * 0.3;    
+            star.opacity = Math.max(0.1, Math.min(0.9, star.opacity));    
+  
+            ctx.fillStyle = `rgba(255, 215, 240, ${star.opacity})`;    
+            ctx.beginPath();    
+            ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);    
+            ctx.fill();    
+        });    
+  
+        // Streaks    
+        if (Math.random() < 0.12) {    
+            particles.push(new Streak());    
+        }    
+  
+        particles.forEach((p, i) => {    
+            p.update();    
+            if (!p.isAlive()) particles.splice(i, 1);    
+            else p.draw();    
+        });    
+  
+        requestAnimationFrame(animate);    
+    }    
+  
+    window.addEventListener('resize', () => {    
+        W = window.innerWidth;    
+        H = window.innerHeight;    
+        canvas.width = W;    
+        canvas.height = H;    
+    });    
+  
+    animate();    
+  
+    // ========== ОСНОВНАЯ ЛОГИКА ==========    
+    const container = document.getElementById('container');    
+    const music = document.getElementById('music');    
+    const musicBtn = document.getElementById('musicBtn');    
+  
+    let stage = 0;    
+  
+    const scenes = [    
+        '1..',    
+        '2..',    
+        '3..',    
+        'поздравляю тебя,',    
+        'моя любовь,',    
+        'с 7 месяцами',    
+        'отношений'    
+    ];    
+  
+    function delay(ms) {    
+        return new Promise(r => setTimeout(r, ms));    
+    }    
+  
+    async function showText(text, duration = 1200) {    
+        container.innerHTML = `<div class="text-container"><div class="text-word">${text}</div></div>`;    
+        const textEl = container.querySelector('.text-container');    
+            
+        await delay(duration);    
+        textEl.classList.add('hide');    
+        await delay(600);    
+    }    
+  
+    async function showHeart() {    
+        container.innerHTML = `<div class="heart-container"><div class="heart"></div></div>`;    
+        const heartContainer = container.querySelector('.heart-container');    
+            
+        return new Promise(resolve => {    
+            heartContainer.addEventListener('click', () => {    
+                burstHeart();    
+                resolve();    
+            }, { once: true });    
+        });    
+    }    
+  
+    function burstHeart() {    
+        const heart = container.querySelector('.heart');    
+        if (!heart) return;    
+  
+        heart.style.animation = 'none';    
+            
+        const bounds = heart.getBoundingClientRect();    
+        const cx = bounds.left + bounds.width / 2;    
+        const cy = bounds.top + bounds.height / 2;    
+  
+        for (let i = 0; i < 15; i++) {    
+            const angle = (i / 15) * Math.PI * 2;    
+            const velocity = 5 + Math.random() * 4;    
+                
+            const droplet = document.createElement('div');    
+            droplet.className = 'droplet';    
+            const size = Math.random() * 10 + 5;    
+            droplet.style.width = size + 'px';    
+            droplet.style.height = size + 'px';    
+            droplet.style.background = `hsla(${Math.random() * 20 + 320}, 100%, 70%, 0.9)`;    
+            droplet.style.left = cx + 'px';    
+            droplet.style.top = cy + 'px';    
+            document.body.appendChild(droplet);    
+  
+            const vx = Math.cos(angle) * velocity;    
+            const vy = Math.sin(angle) * velocity;    
+  
+            let x = cx, y = cy, velX = vx, velY = vy;    
+            const startTime = Date.now();    
+            const duration = 1000;    
+  
+            function animateDroplet() {    
+                const elapsed = Date.now() - startTime;    
+                const progress = elapsed / duration;    
+  
+                if (progress >= 1) {    
+                    droplet.style.opacity = '0';    
+                    droplet.remove();    
+                        
+                    if (i === 14) {    
+                        setTimeout(() => showPulsePoint(), 400);    
+                    }    
+                    return;    
+                }    
+  
+                velY += 0.4;    
+                velX *= 0.97;    
+                velY *= 0.97;    
+  
+                x += velX;    
+                y += velY;    
+  
+                droplet.style.left = x + 'px';    
+                droplet.style.top = y + 'px';    
+                droplet.style.opacity = 1 - progress * 0.4;    
+  
+                requestAnimationFrame(animateDroplet);    
+            }    
+  
+            animateDroplet();    
+        }    
+  
+        heart.remove();    
+    }    
+  
+    async function showPulsePoint() {    
+        container.innerHTML = `    
+            <div class="pulse-point">    
+                <div class="point-label">нажми сюда ↓</div>    
+            </div>    
+        `;    
+            
+        const point = container.querySelector('.pulse-point');    
+        point.style.opacity = '1';    
+        point.style.animation = 'pointPulse 1.2s ease-in-out infinite';    
+  
+        return new Promise(resolve => {    
+            point.addEventListener('click', () => {    
+                createFireworks();    
+                setTimeout(() => {    
+                    container.innerHTML = '';    
+                    showEnvelope();    
+                    resolve();    
+                }, 700);    
+            }, { once: true });    
+        });    
+    }    
+  
+    function createFireworks() {    
+        const point = container.querySelector('.pulse-point');    
+        const bounds = point.getBoundingClientRect();    
+        const cx = bounds.left + bounds.width / 2;    
+        const cy = bounds.top + bounds.height / 2;    
+  
+        for (let i = 0; i < 40; i++) {    
+            const confetti = document.createElement('div');    
+            confetti.className = 'confetti';    
+            confetti.textContent = ['✨', '💫', '⭐'][Math.floor(Math.random() * 3)];    
+            document.body.appendChild(confetti);    
+  
+            const angle = Math.random() * Math.PI * 2;    
+            const velocity = Math.random() * 7 + 5;    
+                
+            let x = cx, y = cy;    
+            let vx = Math.cos(angle) * velocity;    
+            let vy = Math.sin(angle) * velocity;    
+  
+            const startTime = Date.now();    
+            const duration = 1200;    
+  
+            function anim() {    
+                const elapsed = Date.now() - startTime;    
+                const progress = elapsed / duration;    
+  
+                if (progress >= 1) {    
+                    confetti.remove();    
+                    return;    
+                }    
+  
+                vy += 0.25;    
+                vx *= 0.97;    
+                vy *= 0.97;    
+  
+                x += vx;    
+                y += vy;    
+  
+                confetti.style.left = x + 'px';    
+                confetti.style.top = y + 'px';    
+                confetti.style.opacity = 1 - progress * 0.8;    
+  
+                requestAnimationFrame(anim);    
+            }    
+  
+            anim();    
+        }    
+    }    
+  
+    function burstEnvelope(cx, cy) {    
+        const envelope = container.querySelector('.envelope-base');    
+        if (!envelope) return;    
+  
+        for (let i = 0; i < 20; i++) {    
+            const angle = (i / 20) * Math.PI * 2;    
+            const velocity = 4 + Math.random() * 6;    
+                
+            const burst = document.createElement('div');    
+            burst.className = 'envelope-burst';    
+            const size = Math.random() * 15 + 8;    
+            burst.style.width = size + 'px';    
+            burst.style.height = size + 'px';    
+            burst.style.background = `hsl(${Math.random() * 30 + 25}, ${Math.random() * 30 + 40}%, ${Math.random() * 30 + 50}%)`;    
+            burst.style.left = cx + 'px';    
+            burst.style.top = cy + 'px';    
+            burst.style.opacity = '0.9';    
+            document.body.appendChild(burst);    
+  
+            const vx = Math.cos(angle) * velocity;    
+            const vy = Math.sin(angle) * velocity;    
+  
+            let x = cx, y = cy, velX = vx, velY = vy;    
+            const startTime = Date.now();    
+            const duration = 1200;    
+  
+            function animateBurst() {    
+                const elapsed = Date.now() - startTime;    
+                const progress = elapsed / duration;    
+  
+                if (progress >= 1) {    
+                    burst.style.opacity = '0';    
+                    burst.remove();    
+                    return;    
+                }    
+  
+                velY += 0.3;    
+                velX *= 0.96;    
+                velY *= 0.96;    
+  
+                x += velX;    
+                y += velY;    
+  
+                burst.style.left = x + 'px';    
+                burst.style.top = y + 'px';    
+                burst.style.opacity = 0.9 - progress * 0.9;    
+  
+                requestAnimationFrame(animateBurst);    
+            }    
+  
+            animateBurst();    
+        }    
+  
+        envelope.style.opacity = '0';    
+    }    
+  
+    function showEnvelope() {    
+        container.innerHTML = `    
+            <div class="envelope-wrapper">    
+                <div class="envelope-base">    
+                    <div class="envelope-body"></div>    
+                    <div class="envelope-flap"></div>    
+                    <div class="letter">    
+                        <h2>Моя Любовь,</h2>    
+                        <p>Семь месяцев с тобой – это самые чудесные дни моей жизни.</p>    
+                        <p>Твоя улыбка, твой смех, твоё сердце – всё в тебе восхищает меня каждый день.</p>    
+                        <p>Спасибо, что ты рядом со мной.</p>    
+                        <p style="margin-top: 15px;">С любовью,<br>Навсегда твой ❤️</p>    
+                    </div>    
+                </div>    
+            </div>    
+        `;    
+  
+        const wrapper = container.querySelector('.envelope-wrapper');    
+        const flap = container.querySelector('.envelope-flap');    
+        const letter = container.querySelector('.letter');    
+        const envelopeBase = container.querySelector('.envelope-base');    
+            
+        letter.classList.add('visible');    
+  
+        let isDraggingFlap = false;    
+        let isDraggingLetter = false;    
+        let startY = 0;    
+        let startLetterY = 0;    
+        let letterExtracted = false;    
+  
+        flap.addEventListener('mousedown', e => {    
+            if (letterExtracted) return;    
+            isDraggingFlap = true;    
+            startY = e.clientY;    
+            flap.classList.add('dragging');    
+        });    
+  
+        document.addEventListener('mousemove', e => {    
+            if (isDraggingFlap && !letterExtracted) {    
+                const delta = (startY - e.clientY) / 2;    
+                const maxRotate = 160;    
+                const rotation = Math.min(maxRotate, Math.max(0, delta));    
+                flap.style.transform = `rotateX(${rotation}deg)`;    
+                    
+                if (rotation >= 120) {    
+                    flap.classList.add('open');    
+                }    
+            }    
+  
+            if (isDraggingLetter && letterExtracted) {    
+                const delta = startLetterY - e.clientY;    
+                letter.style.transform = `translateX(-50%) translateY(${Math.min(0, delta)}px)`;    
+            }    
+        });    
+  
+        document.addEventListener('mouseup', () => {    
+            isDraggingFlap = false;    
+            isDraggingLetter = false;    
+            flap.classList.remove('dragging');    
+            letter.classList.remove('dragging');    
+        });    
+  
+        letter.addEventListener('mousedown', e => {    
+            if (!letterExtracted) return;    
+            isDraggingLetter = true;    
+            startLetterY = e.clientY;    
+            letter.classList.add('dragging');    
+        });    
+  
+        // Когда письмо полностью вытянули - лопаем конверт    
+        function checkLetterExtracted() {    
+            const transform = letter.style.transform;    
+            const match = transform.match(/translateY([^)]+)px/);    
+            if (match) {    
+                const yOffset = Math.abs(parseFloat(match[1]));    
+                if (yOffset > 120 && !letterExtracted) {    
+                    letterExtracted = true;    
+                    const bounds = envelopeBase.getBoundingClientRect();    
+                    const cx = bounds.left + bounds.width / 2;    
+                    const cy = bounds.top + bounds.height / 2;    
+                    burstEnvelope(cx, cy);    
+                        
+                    // Письмо смещается вперед и центрируется    
+                    setTimeout(() => {    
+                        letter.style.transition = 'transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';    
+                        letter.style.transform = 'translateX(-50%) translateY(-200px) scale(1.05)';    
+                        letter.style.zIndex = '15';    
+                    }, 200);    
+                }    
+            }    
+        }    
+  
+        // Для мобильных    
+        flap.addEventListener('touchstart', e => {    
+            if (letterExtracted) return;    
+            isDraggingFlap = true;    
+            startY = e.touches[0].clientY;    
+            flap.classList.add('dragging');    
+        });    
+  
+        letter.addEventListener('touchstart', e => {    
+            if (!letterExtracted) return;    
+            isDraggingLetter = true;    
+            startLetterY = e.touches[0].clientY;    
+            letter.classList.add('dragging');    
+        });    
+  
+        document.addEventListener('touchmove', e => {    
+            if (isDraggingFlap && !letterExtracted) {    
+                const delta = (startY - e.touches[0].clientY) / 2;    
+                const maxRotate = 160;    
+                const rotation = Math.min(maxRotate, Math.max(0, delta));    
+                flap.style.transform = `rotateX(${rotation}deg)`;    
+                if (rotation >= 120) flap.classList.add('open');    
+            }    
+  
+            if (isDraggingLetter && letterExtracted) {    
+                const delta = startLetterY - e.touches[0].clientY;    
+                letter.style.transform = `translateX(-50%) translateY(${Math.min(0, delta)}px)`;    
+            }    
+  
+            checkLetterExtracted();    
+        });    
+  
+        document.addEventListener('touchend', () => {    
+            isDraggingFlap = false;    
+            isDraggingLetter = false;    
+            flap.classList.remove('dragging');    
+            letter.classList.remove('dragging');    
+        });    
+  
+        // Проверка при движении мышью    
+        const originalMouseMove = document.onmousemove;    
+        document.addEventListener('mousemove', checkLetterExtracted);    
+    }    
+  
+    async function start() {    
+        await delay(500);    
+            
+        for (const scene of scenes) {    
+            await showText(scene, scene.includes('поздравляю') ? 1600 : 1000);    
+        }    
+  
+        await delay(400);    
+        await showHeart();    
+            
+        await delay(600);    
+        await showPulsePoint();    
+    }    
+  
+    // МУЗЫКА    
+    musicBtn.addEventListener('click', async () => {    
+        try {    
+            await music.play();    
+            musicBtn.textContent = '♪ Музыка играет';    
+            musicBtn.disabled = true;    
+        } catch (e) {    
+            console.log('Музыка не запустилась:', e);    
+        }    
+    });    
+  
+    start();    
+</script>  
+  
+</body>    
 </html>
