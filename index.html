@@ -309,41 +309,83 @@
 
       .envelope-shell {
         position: relative;
-        width: min(80vw, 420px);
-        height: min(50vw, 260px);
-        max-height: 260px;
+        width: min(80vw, 430px);
+        height: min(50vw, 270px);
+        max-height: 270px;
         transform: translateY(8px);
         filter: drop-shadow(0 22px 34px rgba(0, 0, 0, 0.28));
         will-change: transform, opacity;
+        perspective: 1200px;
       }
 
       .envelope-back {
         position: absolute;
         inset: 0;
         background:
-          linear-gradient(180deg, rgba(255, 255, 255, 0.13), transparent 30%),
-          linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 48%),
-          linear-gradient(180deg, #f1cfa4 0%, #dfb68b 100%);
-        border-radius: 26px;
+          radial-gradient(
+            120px 80px at 30% 28%,
+            rgba(255, 255, 255, 0.20),
+            transparent 70%
+          ),
+          radial-gradient(
+            220px 140px at 65% 72%,
+            rgba(0, 0, 0, 0.08),
+            transparent 72%
+          ),
+          linear-gradient(180deg, #f6dab3 0%, #dfb98d 100%);
+        border-radius: 28px;
         overflow: hidden;
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3),
-          inset 0 -18px 24px rgba(145, 87, 30, 0.08);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.38),
+          inset 0 -20px 24px rgba(145, 87, 30, 0.08),
+          inset 18px 0 30px rgba(255, 255, 255, 0.07),
+          inset -18px 0 30px rgba(88, 49, 18, 0.06);
         z-index: 1;
       }
 
-      .envelope-back::before,
+      .envelope-back::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(
+            135deg,
+            transparent 46.8%,
+            rgba(143, 91, 38, 0.18) 47.8%,
+            rgba(143, 91, 38, 0.10) 50%,
+            transparent 51%
+          ),
+          linear-gradient(
+            225deg,
+            transparent 46.8%,
+            rgba(143, 91, 38, 0.18) 47.8%,
+            rgba(143, 91, 38, 0.10) 50%,
+            transparent 51%
+          );
+        opacity: 0.9;
+        pointer-events: none;
+      }
+
       .envelope-back::after {
         content: "";
         position: absolute;
         inset: 0;
-        background: linear-gradient(
-          135deg,
-          transparent 49.5%,
-          rgba(146, 95, 43, 0.35) 50%,
-          transparent 50.5%
-        );
+        background:
+          linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.22),
+            rgba(255, 255, 255, 0.04) 18%,
+            transparent 38%
+          ),
+          repeating-linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.02) 0px,
+            rgba(255, 255, 255, 0.02) 2px,
+            transparent 2px,
+            transparent 12px
+          );
         opacity: 0.42;
-        mix-blend-mode: multiply;
+        mix-blend-mode: soft-light;
         pointer-events: none;
       }
 
@@ -352,34 +394,55 @@
         left: 0;
         right: 0;
         bottom: 0;
-        height: 64%;
-        background: linear-gradient(180deg, #e7bf90 0%, #d9ab79 100%);
-        clip-path: polygon(0 0, 50% 56%, 100% 0, 100% 100%, 0 100%);
-        border-radius: 0 0 24px 24px;
+        height: 68%;
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.10), transparent 14%),
+          linear-gradient(180deg, #e9c392 0%, #dca974 100%);
+        clip-path: polygon(0 0, 50% 58%, 100% 0, 100% 100%, 0 100%);
+        border-radius: 0 0 26px 26px;
         opacity: 0.98;
         pointer-events: none;
         z-index: 3;
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.18),
+          inset 0 -10px 22px rgba(122, 77, 31, 0.08);
+      }
+
+      .envelope-front::before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 0;
+        width: 70%;
+        height: 44%;
+        transform: translateX(-50%);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.10), transparent);
+        clip-path: polygon(0 0, 50% 100%, 100% 0);
+        opacity: 0.55;
       }
 
       .envelope-flap {
         position: absolute;
         inset: 0;
-        clip-path: polygon(0 0, 50% 50%, 100% 0, 100% 14%, 50% 64%, 0 14%);
+        clip-path: polygon(0 0, 50% 48%, 100% 0, 100% 16%, 50% 66%, 0 16%);
         background:
-          linear-gradient(180deg, rgba(255, 255, 255, 0.14), transparent 32%),
-          linear-gradient(180deg, #eac59a 0%, #c89b69 100%);
-        transform-origin: 50% 14%;
+          linear-gradient(180deg, rgba(255, 255, 255, 0.20), transparent 28%),
+          linear-gradient(180deg, #eac69b 0%, #c79663 100%);
+        transform-origin: 50% 0%;
         transform: rotateX(0deg) translateY(0);
         transition: transform 0.95s var(--ease-soft),
           filter 0.95s var(--ease-soft), opacity 0.35s ease;
         z-index: 4;
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.36),
+          inset 0 -12px 20px rgba(87, 54, 22, 0.10);
         cursor: pointer;
+        backface-visibility: hidden;
+        transform-style: preserve-3d;
       }
 
       .envelope-flap.open {
-        transform: rotateX(180deg) translateY(-3px);
+        transform: rotateX(-180deg) translateY(-2px);
         filter: brightness(0.98);
         cursor: default;
       }
@@ -388,8 +451,8 @@
         position: absolute;
         left: 50%;
         top: 46%;
-        width: 34px;
-        height: 34px;
+        width: 36px;
+        height: 36px;
         transform: translate(-50%, -50%);
         border-radius: 50%;
         background: radial-gradient(
@@ -422,11 +485,12 @@
             rgba(255, 255, 255, 0.28),
             rgba(255, 255, 255, 0.06)
           ),
-          linear-gradient(180deg, #f7e6c9 0%, #eed3aa 100%);
+          linear-gradient(180deg, #f8ead0 0%, #efd7b3 100%);
         border: 1px solid rgba(92, 59, 24, 0.09);
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.36),
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.40),
           0 14px 24px rgba(0, 0, 0, 0.09);
-        transform: translateY(42%) translateZ(0);
+        transform: translateY(40%) translateZ(0);
         z-index: 2;
         touch-action: none;
         pointer-events: auto;
@@ -440,8 +504,8 @@
         inset: 0;
         background: radial-gradient(
           800px 220px at 50% 0%,
-          rgba(255, 255, 255, 0.32),
-          transparent 60%
+          rgba(255, 255, 255, 0.34),
+          transparent 58%
         );
         pointer-events: none;
       }
@@ -453,7 +517,7 @@
         background:
           linear-gradient(
             90deg,
-            rgba(255, 255, 255, 0.05) 0,
+            rgba(255, 255, 255, 0.06) 0,
             rgba(255, 255, 255, 0) 18%,
             rgba(255, 255, 255, 0.03) 38%,
             rgba(255, 255, 255, 0) 62%,
@@ -466,7 +530,7 @@
             transparent 1px,
             transparent 8px
           );
-        opacity: 0.5;
+        opacity: 0.45;
         pointer-events: none;
       }
 
@@ -478,8 +542,8 @@
         width: 56px;
         height: 6px;
         border-radius: 999px;
-        background: rgba(73, 46, 25, 0.18);
-        opacity: 0.7;
+        background: rgba(73, 46, 25, 0.16);
+        opacity: 0.72;
       }
 
       .paper-content {
@@ -495,6 +559,7 @@
         opacity: 0.96;
         user-select: none;
         text-shadow: 0 1px 0 rgba(255, 255, 255, 0.25);
+        white-space: pre-line;
       }
 
       .paper-content .placeholder {
@@ -644,6 +709,14 @@
         z-index: 1000;
         pointer-events: none;
         will-change: left, top, transform, opacity;
+      }
+
+      .floating-paper .paper-content {
+        inset: 28px 26px 20px;
+      }
+
+      .floating-paper .paper-grip {
+        opacity: 0 !important;
       }
     </style>
   </head>
@@ -1080,8 +1153,11 @@
             <div class="paper" id="paper">
               <div class="paper-handle"></div>
               <div class="paper-grip">тянуть вверх</div>
-              <div class="paper-content">
-                <span class="placeholder">Текст письма появится здесь</span>
+              <div class="paper-content" id="paperContent">
+                Моя любовь,
+                каждый день с тобой — это мой самый тёплый день.
+                Спасибо за эти 7 месяцев.
+                Ты — самое нежное, что есть в моей жизни.
               </div>
             </div>
             <div class="envelope-front"></div>
@@ -1092,18 +1168,21 @@
 
         envelopeStage.style.opacity = "1";
         envelopeStage.style.transform = "translateY(0)";
+        envelopeStage.style.pointerEvents = "auto";
 
         const shell = document.getElementById("envelopeShell");
         const flap = document.getElementById("flap");
         const seal = document.getElementById("seal");
         const paper = document.getElementById("paper");
+        const paperContent = document.getElementById("paperContent");
 
         let opened = false;
         let extracting = false;
         let finished = false;
         let autoPullTimer = null;
+        let draggingPointerId = null;
 
-        paper.style.transform = "translateY(42%)";
+        paper.style.transform = "translateY(40%)";
 
         const openEnvelope = () => {
           if (opened) return;
@@ -1113,47 +1192,41 @@
           shell.classList.add("paper-ready");
           paper.animate(
             [
-              { transform: "translateY(42%) scale(1)" },
-              { transform: "translateY(34%) scale(1.01)" },
+              { transform: "translateY(40%) scale(1)" },
+              { transform: "translateY(33%) scale(1.01)" },
             ],
             {
-              duration: 650,
+              duration: 680,
               easing: "cubic-bezier(0.16, 0.84, 0.22, 1)",
               fill: "forwards",
             }
           );
-          paper.style.transform = "translateY(34%)";
+          paper.style.transform = "translateY(33%)";
         };
 
-        const removeEnvelope = () => {
-          if (finished) return;
-          finished = true;
-
+        const burstEnvelope = () => {
           const rect = shell.getBoundingClientRect();
           const cx = rect.left + rect.width / 2;
           const cy = rect.top + rect.height / 2;
 
-          flap.classList.remove("open");
-          seal.classList.add("gone");
-
-          makeParticleBurst(cx, cy, 74, 8.5, 3, 8, 1120, "spark");
-          makeParticleBurst(cx, cy, 26, 7, 5, 10, 900, "dot");
+          makeParticleBurst(cx, cy, 84, 8.5, 3, 8, 1120, "spark");
+          makeParticleBurst(cx, cy, 30, 7, 5, 10, 900, "dot");
 
           shell.animate(
             [
               { transform: "translateY(8px) scale(1)", opacity: 1 },
               {
                 transform: "translateY(8px) scale(0.96) rotate(-1deg)",
-                opacity: 0.86,
+                opacity: 0.88,
                 offset: 0.25,
               },
               {
-                transform: "translateY(8px) scale(0.55) rotate(6deg)",
+                transform: "translateY(8px) scale(0.56) rotate(6deg)",
                 opacity: 0,
               },
             ],
             {
-              duration: 650,
+              duration: 680,
               easing: "cubic-bezier(0.16, 0.84, 0.22, 1)",
               fill: "forwards",
             }
@@ -1166,7 +1239,7 @@
 
           setTimeout(() => {
             envelopeStage.innerHTML = "";
-          }, 900);
+          }, 920);
         };
 
         const movePaperToCenter = () => {
@@ -1209,7 +1282,7 @@
               },
             ],
             {
-              duration: 980,
+              duration: 1000,
               easing: "cubic-bezier(0.16, 0.84, 0.22, 1)",
               fill: "forwards",
             }
@@ -1220,7 +1293,7 @@
             floating.style.top = centerTop + "px";
             floating.style.transform = "translateY(0px) scale(1.02)";
             floating.style.pointerEvents = "none";
-          }, 980);
+          }, 1000);
         };
 
         const triggerExtraction = () => {
@@ -1232,7 +1305,7 @@
 
           const lift = paper.animate(
             [
-              { transform: "translateY(34%) scale(1)" },
+              { transform: "translateY(33%) scale(1)" },
               { transform: "translateY(26%) scale(1.01)" },
             ],
             {
@@ -1247,10 +1320,10 @@
               [
                 { transform: "translateY(26%) scale(1.01)" },
                 { transform: "translateY(-2%) scale(1.02)" },
-                { transform: "translateY(-58%) scale(1.005)" },
+                { transform: "translateY(-60%) scale(1.005)" },
               ],
               {
-                duration: 760,
+                duration: 780,
                 easing: "cubic-bezier(0.16, 0.84, 0.22, 1)",
                 fill: "forwards",
               }
@@ -1258,8 +1331,10 @@
 
             setTimeout(() => {
               movePaperToCenter();
-              removeEnvelope();
-            }, 520);
+              flap.classList.remove("open");
+              seal.classList.add("gone");
+              burstEnvelope();
+            }, 560);
           };
         };
 
@@ -1268,6 +1343,7 @@
           if (finished || extracting) return;
           if (!opened) openEnvelope();
           extracting = true;
+          draggingPointerId = e.pointerId;
 
           paper.setPointerCapture?.(e.pointerId);
 
@@ -1277,8 +1353,8 @@
 
           paper.animate(
             [
-              { transform: "translateY(34%) scale(1)" },
-              { transform: "translateY(30%) scale(1.008)" },
+              { transform: "translateY(33%) scale(1)" },
+              { transform: "translateY(29%) scale(1.008)" },
             ],
             {
               duration: 120,
@@ -1290,17 +1366,24 @@
 
         const paperPointerMove = (e) => {
           if (!extracting || finished) return;
+          if (draggingPointerId !== null && e.pointerId !== draggingPointerId) return;
+
           const rect = shell.getBoundingClientRect();
           const deltaPx = Math.max(0, rect.bottom - e.clientY);
-          if (deltaPx > 16) {
+
+          if (deltaPx > 12) {
             clearTimeout(autoPullTimer);
             triggerExtraction();
           }
         };
 
-        const paperPointerUp = () => {
+        const paperPointerUp = (e) => {
           if (finished) return;
+          if (draggingPointerId !== null && e.pointerId !== draggingPointerId) return;
+
           clearTimeout(autoPullTimer);
+          draggingPointerId = null;
+
           if (extracting) {
             triggerExtraction();
           }
