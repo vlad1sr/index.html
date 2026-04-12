@@ -184,25 +184,6 @@
         }
       }
 
-      .hint {
-        margin-top: 18px;
-        font-size: clamp(17px, 2.2vw, 22px);
-        font-style: italic;
-        font-weight: 700;
-        color: rgba(255, 248, 252, 0.92);
-        text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.95),
-          1px -1px 0 rgba(0, 0, 0, 0.95), -1px 1px 0 rgba(0, 0, 0, 0.95),
-          1px 1px 0 rgba(0, 0, 0, 0.95);
-        opacity: 0;
-        transform: translateY(12px);
-        transition: opacity 1s var(--ease-soft), transform 1s var(--ease-soft);
-      }
-
-      .hint.show {
-        opacity: 0.86;
-        transform: translateY(0);
-      }
-
       .dot {
         width: 18px;
         height: 18px;
@@ -215,29 +196,19 @@
         );
         box-shadow: 0 0 0 8px rgba(255, 124, 186, 0.08),
           0 0 24px rgba(255, 123, 184, 0.32);
+        animation: pulse 1.8s var(--ease-soft) infinite;
         pointer-events: auto;
         cursor: pointer;
         will-change: transform, opacity;
-        opacity: 0;
-        transform: scale(0.72);
       }
 
-      .dot.pop {
-        animation: dotPop 1.05s var(--ease-out) forwards;
-      }
-
-      @keyframes dotPop {
-        0% {
-          opacity: 0;
-          transform: scale(0.72);
-        }
-        55% {
-          opacity: 1;
-          transform: scale(1.06);
-        }
+      @keyframes pulse {
+        0%,
         100% {
-          opacity: 1;
           transform: scale(1);
+        }
+        50% {
+          transform: scale(1.16);
         }
       }
 
@@ -521,7 +492,7 @@
 
       .paper-content {
         position: absolute;
-        inset: 34px 24px 20px;
+        inset: 22px 20px 18px;
         overflow: hidden;
         color: var(--ink);
         font-family: "Playfair Display", Georgia, serif;
@@ -533,11 +504,19 @@
         user-select: none;
         text-shadow: 0 1px 0 rgba(255, 255, 255, 0.25);
         white-space: pre-line;
+        display: grid;
+        place-items: center;
       }
 
-      .paper-content .placeholder {
-        color: rgba(47, 33, 24, 0.64);
-        font-style: italic;
+      .paper-qr {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: block;
+        border-radius: 14px;
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+        user-select: none;
+        -webkit-user-drag: none;
       }
 
       .paper-grip {
@@ -554,75 +533,6 @@
 
       .paper-ready .paper-grip {
         opacity: 1;
-      }
-
-      .pull-label {
-        position: absolute;
-        top: -72px;
-        left: 50%;
-        transform: translateX(-50%);
-        display: grid;
-        justify-items: center;
-        gap: 8px;
-        pointer-events: none;
-        z-index: 20;
-      }
-
-      .pull-label .pull-text {
-        color: rgba(255, 248, 252, 0.94);
-        font: 800 clamp(18px, 2.6vw, 24px) / 1.1 Inter,
-          -apple-system, BlinkMacSystemFont, "San Francisco", system-ui,
-          sans-serif;
-        letter-spacing: 0.01em;
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
-      }
-
-      .pull-label .pull-arrow {
-        width: 56px;
-        height: 38px;
-        position: relative;
-        filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.28));
-        animation: pullArrow 1.7s ease-in-out infinite;
-      }
-
-      .pull-label .pull-arrow::before {
-        content: "";
-        position: absolute;
-        left: 26px;
-        top: 5px;
-        width: 3px;
-        height: 20px;
-        border-radius: 999px;
-        background: linear-gradient(
-          180deg,
-          rgba(255, 255, 255, 0.92),
-          rgba(255, 255, 255, 0.55)
-        );
-      }
-
-      .pull-label .pull-arrow::after {
-        content: "";
-        position: absolute;
-        left: 20px;
-        top: 18px;
-        width: 15px;
-        height: 15px;
-        border-left: 3px solid rgba(255, 255, 255, 0.92);
-        border-bottom: 3px solid rgba(255, 255, 255, 0.92);
-        transform: rotate(-45deg);
-        border-radius: 2px;
-      }
-
-      @keyframes pullArrow {
-        0%,
-        100% {
-          transform: translateY(0);
-          opacity: 0.9;
-        }
-        50% {
-          transform: translateY(8px);
-          opacity: 1;
-        }
       }
 
       .soft-glow {
@@ -685,7 +595,7 @@
       }
 
       .floating-paper .paper-content {
-        inset: 28px 26px 20px;
+        inset: 18px 18px 16px;
       }
 
       .floating-paper .paper-grip {
@@ -920,21 +830,21 @@
                 opacity: 1,
               },
               {
-                transform: `translate(-50%, -50%) translate(${p.dx * 0.42}px, ${
-                  p.dy * 0.42 - arc
+                transform: `translate(-50%, -50%) translate(${p.dx * 0.45}px, ${
+                  p.dy * 0.45 - arc
                 }px) scale(1.08)`,
                 opacity: 1,
-                offset: 0.14,
+                offset: 0.18,
               },
               {
-                transform: `translate(-50%, -50%) translate(${p.dx * 0.76 + wobble * 0.25}px, ${
-                  p.dy * 0.76 + arc
-                }px) scale(0.92)`,
+                transform: `translate(-50%, -50%) translate(${p.dx * 0.78 + wobble * 0.25}px, ${
+                  p.dy * 0.78 + arc
+                }px) scale(0.9)`,
                 opacity: 0.96,
-                offset: 0.42,
+                offset: 0.44,
               },
               {
-                transform: `translate(-50%, -50%) translate(${p.dx}px, ${p.dy}px) scale(0.16)`,
+                transform: `translate(-50%, -50%) translate(${p.dx}px, ${p.dy}px) scale(0.15)`,
                 opacity: 0,
               },
             ],
@@ -994,9 +904,9 @@
       }
 
       function makeHeartFireworkBurst(x, y) {
-        makeParticleBurst(x, y, 66, 12, 4, 10, 1460, "spark");
-        setTimeout(() => makeParticleBurst(x, y, 28, 10, 5, 12, 1120, "dot"), 90);
-        setTimeout(() => makeParticleBurst(x, y, 18, 13, 3, 7, 1280, "spark"), 180);
+        makeParticleBurst(x, y, 64, 12, 4, 10, 1460, "spark");
+        setTimeout(() => makeParticleBurst(x, y, 28, 10, 5, 12, 1120, "dot"), 80);
+        setTimeout(() => makeParticleBurst(x, y, 18, 13, 3, 7, 1280, "spark"), 170);
         setTimeout(() => makeParticleBurst(x, y, 12, 11, 4, 8, 1100, "dot"), 260);
       }
 
@@ -1058,19 +968,19 @@
           [
             { transform: "scale(1) rotate(0deg)", opacity: 1 },
             {
-              transform: "scale(1.06) rotate(-2deg)",
+              transform: "scale(1.05) rotate(-2deg)",
               opacity: 1,
-              offset: 0.14,
+              offset: 0.16,
             },
             {
               transform: "scale(1.12) rotate(2deg)",
               opacity: 1,
-              offset: 0.34,
+              offset: 0.38,
             },
             {
               transform: "scale(0.78) rotate(7deg)",
               opacity: 0.72,
-              offset: 0.72,
+              offset: 0.74,
             },
             { transform: "scale(0.12) rotate(12deg)", opacity: 0 },
           ],
@@ -1085,19 +995,19 @@
           [
             { transform: "rotate(45deg) scale(1)", opacity: 1 },
             {
-              transform: "rotate(45deg) scale(1.08)",
+              transform: "rotate(45deg) scale(1.12)",
               opacity: 1,
               offset: 0.22,
             },
             {
-              transform: "rotate(45deg) scale(1.2)",
-              opacity: 0.98,
-              offset: 0.44,
+              transform: "rotate(45deg) scale(1.28)",
+              opacity: 0.96,
+              offset: 0.45,
             },
             {
               transform: "rotate(45deg) scale(0.88)",
-              opacity: 0.4,
-              offset: 0.7,
+              opacity: 0.45,
+              offset: 0.66,
             },
             { transform: "rotate(45deg) scale(0.12)", opacity: 0 },
           ],
@@ -1120,19 +1030,18 @@
         glow.style.zIndex = "999";
         glow.style.background =
           "radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(255, 154, 203, 0.55) 30%, rgba(255, 122, 183, 0.05) 72%, rgba(255, 122, 183, 0) 100%)";
-        glow.style.filter = "blur(0px)";
         document.body.appendChild(glow);
 
         glow.animate(
           [
             { transform: "translate(-50%, -50%) scale(1)", opacity: 0.95 },
             {
-              transform: "translate(-50%, -50%) scale(8.5)",
+              transform: "translate(-50%, -50%) scale(9)",
               opacity: 0.55,
               offset: 0.4,
             },
             {
-              transform: "translate(-50%, -50%) scale(17)",
+              transform: "translate(-50%, -50%) scale(18)",
               opacity: 0,
             },
           ],
@@ -1157,20 +1066,38 @@
 
       function showDot() {
         textWrap.innerHTML = "";
+
         const wrap = document.createElement("div");
+        wrap.style.position = "relative";
         wrap.style.display = "grid";
         wrap.style.placeItems = "center";
-        wrap.style.gap = "12px";
         wrap.style.pointerEvents = "auto";
-        wrap.style.position = "relative";
         wrap.style.zIndex = "10";
 
-        const hint = document.createElement("div");
-        hint.className = "hint show";
-        hint.textContent = "нажми сюда";
-
         const dot = document.createElement("div");
-        dot.className = "dot pop";
+        dot.className = "dot";
+        dot.style.opacity = "0";
+        dot.style.transform = "scale(0.35)";
+
+        wrap.appendChild(dot);
+        textWrap.appendChild(wrap);
+
+        requestAnimationFrame(() => {
+          dot.animate(
+            [
+              { transform: "scale(0.35)", opacity: 0 },
+              { transform: "scale(1.08)", opacity: 1, offset: 0.55 },
+              { transform: "scale(1)", opacity: 1 },
+            ],
+            {
+              duration: 520,
+              easing: "cubic-bezier(0.16, 0.84, 0.22, 1)",
+              fill: "forwards",
+            }
+          );
+          dot.style.opacity = "1";
+          dot.style.transform = "scale(1)";
+        });
 
         dot.addEventListener(
           "pointerdown",
@@ -1180,20 +1107,29 @@
           },
           { once: true }
         );
-
-        wrap.appendChild(hint);
-        wrap.appendChild(dot);
-        textWrap.appendChild(wrap);
       }
 
       function explodeDot(dot) {
         const rect = dot.getBoundingClientRect();
         const x = rect.left + rect.width / 2;
         const y = rect.top + rect.height / 2;
-        dot.style.transform = "scale(0.35)";
-        dot.style.opacity = "0";
+
+        dot.animate(
+          [
+            { transform: "scale(1)", opacity: 1 },
+            { transform: "scale(1.12)", opacity: 1, offset: 0.2 },
+            { transform: "scale(0.55)", opacity: 0.95, offset: 0.5 },
+            { transform: "scale(0.1)", opacity: 0 },
+          ],
+          {
+            duration: 520,
+            easing: "cubic-bezier(0.16, 0.84, 0.22, 1)",
+            fill: "forwards",
+          }
+        );
+
         makeParticleBurst(x, y, 66, 9.5, 3, 7, 1050, "spark");
-        setTimeout(showEnvelope, 1040);
+        setTimeout(showEnvelope, 900);
       }
 
       function showEnvelope() {
@@ -1209,10 +1145,7 @@
               <div class="paper-handle"></div>
               <div class="paper-grip">тянуть вверх</div>
               <div class="paper-content" id="paperContent">
-Моя любовь,
-каждый день с тобой — это мой самый тёплый день.
-Спасибо за эти 7 месяцев.
-Ты — самое нежное, что есть в моей жизни.
+                <img class="paper-qr" src="qr.jpg" alt="qr.jpg" />
               </div>
             </div>
             <div class="envelope-front"></div>
@@ -1243,7 +1176,7 @@
         let draggingPointerId = null;
 
         function setPaperTranslate(percent) {
-          currentTranslate = Math.max(-12, Math.min(28, percent));
+          currentTranslate = Math.max(-96, Math.min(30, percent));
           paper.style.transform = `translateY(${currentTranslate}%) translateZ(0)`;
         }
 
@@ -1255,7 +1188,6 @@
           flap.classList.add("open");
           seal.classList.add("gone");
           shell.classList.add("paper-ready");
-
           setPaperTranslate(18);
 
           paper.animate(
@@ -1415,7 +1347,6 @@
             exitAnim.onfinish = () => {
               movePaperToCenter();
               paper.style.opacity = "0";
-
               flap.classList.remove("open");
               seal.classList.add("gone");
 
