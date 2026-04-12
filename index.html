@@ -215,19 +215,29 @@
         );
         box-shadow: 0 0 0 8px rgba(255, 124, 186, 0.08),
           0 0 24px rgba(255, 123, 184, 0.32);
-        animation: pulse 1.8s var(--ease-soft) infinite;
         pointer-events: auto;
         cursor: pointer;
-        will-change: transform;
+        will-change: transform, opacity;
+        opacity: 0;
+        transform: scale(0.72);
       }
 
-      @keyframes pulse {
-        0%,
-        100% {
-          transform: scale(1);
+      .dot.pop {
+        animation: dotPop 1.05s var(--ease-out) forwards;
+      }
+
+      @keyframes dotPop {
+        0% {
+          opacity: 0;
+          transform: scale(0.72);
         }
-        50% {
-          transform: scale(1.16);
+        55% {
+          opacity: 1;
+          transform: scale(1.06);
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1);
         }
       }
 
@@ -681,10 +691,6 @@
       .floating-paper .paper-grip {
         opacity: 0 !important;
       }
-
-      .envelope-stage.fade-away {
-        transition: opacity 0.7s var(--ease-soft), transform 0.7s var(--ease-soft);
-      }
     </style>
   </head>
 
@@ -914,21 +920,21 @@
                 opacity: 1,
               },
               {
-                transform: `translate(-50%, -50%) translate(${p.dx * 0.45}px, ${
-                  p.dy * 0.45 - arc
+                transform: `translate(-50%, -50%) translate(${p.dx * 0.42}px, ${
+                  p.dy * 0.42 - arc
                 }px) scale(1.08)`,
                 opacity: 1,
-                offset: 0.18,
+                offset: 0.14,
               },
               {
-                transform: `translate(-50%, -50%) translate(${p.dx * 0.78 + wobble * 0.25}px, ${
-                  p.dy * 0.78 + arc
-                }px) scale(0.9)`,
+                transform: `translate(-50%, -50%) translate(${p.dx * 0.76 + wobble * 0.25}px, ${
+                  p.dy * 0.76 + arc
+                }px) scale(0.92)`,
                 opacity: 0.96,
-                offset: 0.44,
+                offset: 0.42,
               },
               {
-                transform: `translate(-50%, -50%) translate(${p.dx}px, ${p.dy}px) scale(0.15)`,
+                transform: `translate(-50%, -50%) translate(${p.dx}px, ${p.dy}px) scale(0.16)`,
                 opacity: 0,
               },
             ],
@@ -988,9 +994,9 @@
       }
 
       function makeHeartFireworkBurst(x, y) {
-        makeParticleBurst(x, y, 64, 12, 4, 10, 1460, "spark");
-        setTimeout(() => makeParticleBurst(x, y, 28, 10, 5, 12, 1120, "dot"), 80);
-        setTimeout(() => makeParticleBurst(x, y, 18, 13, 3, 7, 1280, "spark"), 170);
+        makeParticleBurst(x, y, 66, 12, 4, 10, 1460, "spark");
+        setTimeout(() => makeParticleBurst(x, y, 28, 10, 5, 12, 1120, "dot"), 90);
+        setTimeout(() => makeParticleBurst(x, y, 18, 13, 3, 7, 1280, "spark"), 180);
         setTimeout(() => makeParticleBurst(x, y, 12, 11, 4, 8, 1100, "dot"), 260);
       }
 
@@ -1052,19 +1058,19 @@
           [
             { transform: "scale(1) rotate(0deg)", opacity: 1 },
             {
-              transform: "scale(1.05) rotate(-2deg)",
+              transform: "scale(1.06) rotate(-2deg)",
               opacity: 1,
-              offset: 0.16,
+              offset: 0.14,
             },
             {
               transform: "scale(1.12) rotate(2deg)",
               opacity: 1,
-              offset: 0.38,
+              offset: 0.34,
             },
             {
               transform: "scale(0.78) rotate(7deg)",
               opacity: 0.72,
-              offset: 0.74,
+              offset: 0.72,
             },
             { transform: "scale(0.12) rotate(12deg)", opacity: 0 },
           ],
@@ -1079,19 +1085,19 @@
           [
             { transform: "rotate(45deg) scale(1)", opacity: 1 },
             {
-              transform: "rotate(45deg) scale(1.12)",
+              transform: "rotate(45deg) scale(1.08)",
               opacity: 1,
               offset: 0.22,
             },
             {
-              transform: "rotate(45deg) scale(1.28)",
-              opacity: 0.96,
-              offset: 0.45,
+              transform: "rotate(45deg) scale(1.2)",
+              opacity: 0.98,
+              offset: 0.44,
             },
             {
               transform: "rotate(45deg) scale(0.88)",
-              opacity: 0.45,
-              offset: 0.66,
+              opacity: 0.4,
+              offset: 0.7,
             },
             { transform: "rotate(45deg) scale(0.12)", opacity: 0 },
           ],
@@ -1121,12 +1127,12 @@
           [
             { transform: "translate(-50%, -50%) scale(1)", opacity: 0.95 },
             {
-              transform: "translate(-50%, -50%) scale(9)",
+              transform: "translate(-50%, -50%) scale(8.5)",
               opacity: 0.55,
               offset: 0.4,
             },
             {
-              transform: "translate(-50%, -50%) scale(18)",
+              transform: "translate(-50%, -50%) scale(17)",
               opacity: 0,
             },
           ],
@@ -1154,7 +1160,7 @@
         const wrap = document.createElement("div");
         wrap.style.display = "grid";
         wrap.style.placeItems = "center";
-        wrap.style.gap = "14px";
+        wrap.style.gap = "12px";
         wrap.style.pointerEvents = "auto";
         wrap.style.position = "relative";
         wrap.style.zIndex = "10";
@@ -1164,7 +1170,7 @@
         hint.textContent = "нажми сюда";
 
         const dot = document.createElement("div");
-        dot.className = "dot";
+        dot.className = "dot pop";
 
         dot.addEventListener(
           "pointerdown",
@@ -1196,6 +1202,7 @@
           <div class="envelope-shell" id="envelopeShell">
             <div class="pull-label">
               <div class="pull-text">вытяни</div>
+              <div class="pull-arrow"></div>
             </div>
             <div class="envelope-back"></div>
             <div class="paper" id="paper">
@@ -1236,7 +1243,7 @@
         let draggingPointerId = null;
 
         function setPaperTranslate(percent) {
-          currentTranslate = Math.max(-96, Math.min(24, percent));
+          currentTranslate = Math.max(-12, Math.min(28, percent));
           paper.style.transform = `translateY(${currentTranslate}%) translateZ(0)`;
         }
 
@@ -1377,7 +1384,9 @@
           const startLift = paper.animate(
             [
               { transform: `translateY(${currentTranslate}%) scale(1)` },
-              { transform: `translateY(${Math.max(currentTranslate - 8, 10)}%) scale(1.01)` },
+              {
+                transform: `translateY(${Math.max(currentTranslate - 8, 10)}%) scale(1.01)`,
+              },
             ],
             {
               duration: 180,
@@ -1436,7 +1445,9 @@
           paper.animate(
             [
               { transform: `translateY(${currentTranslate}%) scale(1)` },
-              { transform: `translateY(${Math.max(currentTranslate - 2, 12)}%) scale(1.008)` },
+              {
+                transform: `translateY(${Math.max(currentTranslate - 2, 12)}%) scale(1.008)`,
+              },
             ],
             {
               duration: 120,
@@ -1453,7 +1464,7 @@
           e.preventDefault();
 
           const deltaPx = dragStartY - e.clientY;
-          const next = Math.max(-12, Math.min(24, dragStartTranslate - deltaPx / 4.8));
+          const next = Math.max(-12, Math.min(28, dragStartTranslate - deltaPx / 4.8));
           setPaperTranslate(next);
 
           if (deltaPx > 38) {
@@ -1475,7 +1486,9 @@
             paper.animate(
               [
                 { transform: `translateY(${currentTranslate}%) scale(1)` },
-                { transform: `translateY(${Math.min(currentTranslate + 5, 18)}%) scale(1)` },
+                {
+                  transform: `translateY(${Math.min(currentTranslate + 6, 18)}%) scale(1)`,
+                },
               ],
               {
                 duration: 360,
@@ -1483,7 +1496,7 @@
                 fill: "forwards",
               }
             );
-            setPaperTranslate(Math.min(currentTranslate + 5, 18));
+            setPaperTranslate(Math.min(currentTranslate + 6, 18));
             extracting = false;
           }
         };
