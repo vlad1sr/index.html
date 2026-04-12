@@ -256,6 +256,7 @@
         width: min(80vw, 430px);
         height: min(50vw, 270px);
         max-height: 270px;
+        transform: translateY(8px);
         filter: drop-shadow(0 22px 34px rgba(0, 0, 0, 0.28));
         will-change: transform, opacity;
         perspective: 1200px;
@@ -413,18 +414,34 @@
         position: absolute;
         inset: 0;
         background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.2), transparent 20%),
           radial-gradient(
-            180px 80px at 50% 24%,
-            rgba(255, 255, 255, 0.16),
-            transparent 70%
+            220px 80px at 50% 22%,
+            rgba(255, 255, 255, 0.14),
+            transparent 66%
+          );
+        opacity: 0.95;
+        pointer-events: none;
+      }
+
+      .envelope-flap::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(
+            135deg,
+            transparent 46%,
+            rgba(128, 79, 31, 0.2) 47.5%,
+            transparent 49.5%
           ),
           linear-gradient(
-            180deg,
-            rgba(255, 255, 255, 0.05),
-            rgba(0, 0, 0, 0.04)
+            225deg,
+            transparent 46%,
+            rgba(128, 79, 31, 0.18) 47.5%,
+            transparent 49.5%
           );
         opacity: 0.9;
-        pointer-events: none;
       }
 
       .envelope-flap.open {
@@ -456,75 +473,6 @@
       .envelope-seal.gone {
         opacity: 0;
         transform: translate(-50%, -50%) scale(0.25);
-      }
-
-      .pull-label {
-        position: absolute;
-        top: -72px;
-        left: 50%;
-        transform: translateX(-50%);
-        display: grid;
-        justify-items: center;
-        gap: 8px;
-        pointer-events: none;
-        z-index: 20;
-      }
-
-      .pull-label .pull-text {
-        color: rgba(255, 248, 252, 0.94);
-        font: 800 clamp(18px, 2.6vw, 24px) / 1.1 Inter,
-          -apple-system, BlinkMacSystemFont, "San Francisco", system-ui,
-          sans-serif;
-        letter-spacing: 0.01em;
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
-      }
-
-      .pull-label .pull-arrow {
-        width: 56px;
-        height: 38px;
-        position: relative;
-        filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.28));
-        animation: pullArrow 1.7s ease-in-out infinite;
-      }
-
-      .pull-label .pull-arrow::before {
-        content: "";
-        position: absolute;
-        left: 26px;
-        top: 5px;
-        width: 3px;
-        height: 20px;
-        border-radius: 999px;
-        background: linear-gradient(
-          180deg,
-          rgba(255, 255, 255, 0.92),
-          rgba(255, 255, 255, 0.55)
-        );
-      }
-
-      .pull-label .pull-arrow::after {
-        content: "";
-        position: absolute;
-        left: 20px;
-        top: 18px;
-        width: 15px;
-        height: 15px;
-        border-left: 3px solid rgba(255, 255, 255, 0.92);
-        border-bottom: 3px solid rgba(255, 255, 255, 0.92);
-        transform: rotate(-45deg);
-        border-radius: 2px;
-      }
-
-      @keyframes pullArrow {
-        0%,
-        100% {
-          transform: translateY(0);
-          opacity: 0.9;
-        }
-        50% {
-          transform: translateY(8px);
-          opacity: 1;
-        }
       }
 
       .paper {
@@ -605,7 +553,9 @@
         position: absolute;
         inset: 16px 16px 14px;
         overflow: hidden;
+        color: var(--ink);
         user-select: none;
+        text-shadow: 0 1px 0 rgba(255, 255, 255, 0.25);
         white-space: pre-line;
         display: grid;
         place-items: center;
@@ -705,14 +655,6 @@
       .floating-paper .paper-grip {
         opacity: 0 !important;
       }
-
-      .envelope-stage {
-        position: absolute;
-        inset: 0;
-        display: grid;
-        place-items: center;
-        pointer-events: auto;
-      }
     </style>
   </head>
 
@@ -739,7 +681,7 @@
 
     <button class="music-btn" id="musicBtn">Включить музыку</button>
     <div class="tiny-note">
-      Для музыки добавь файл music.mp3 рядом с index.html
+      🎵 M. — Anıl Emre Daldal
     </div>
 
     <audio id="music" loop preload="auto">
@@ -1185,8 +1127,6 @@
         wrap.style.placeItems = "center";
         wrap.style.pointerEvents = "auto";
         wrap.style.zIndex = "10";
-        wrap.style.left = "0";
-        wrap.style.top = "0";
 
         const dot = document.createElement("div");
         dot.className = "dot";
@@ -1250,10 +1190,6 @@
         textWrap.innerHTML = "";
         envelopeStage.innerHTML = `
           <div class="envelope-shell" id="envelopeShell">
-            <div class="pull-label">
-              <div class="pull-text">вытяни</div>
-              <div class="pull-arrow"></div>
-            </div>
             <div class="envelope-back"></div>
             <div class="paper" id="paper">
               <div class="paper-handle"></div>
@@ -1271,6 +1207,11 @@
         envelopeStage.style.opacity = "0";
         envelopeStage.style.transform = "translateY(0) scale(1)";
         envelopeStage.style.pointerEvents = "auto";
+        envelopeStage.style.position = "fixed";
+        envelopeStage.style.left = "0";
+        envelopeStage.style.top = "0";
+        envelopeStage.style.width = "100vw";
+        envelopeStage.style.height = "100vh";
 
         const shell = document.getElementById("envelopeShell");
         const flap = document.getElementById("flap");
@@ -1299,26 +1240,16 @@
         shell.style.position = "absolute";
         shell.style.left = originX + "px";
         shell.style.top = originY + "px";
-        shell.style.transform = "translate(-50%, -50%) scale(0.22)";
+        shell.style.transform = "translate(-50%, -50%) scale(0.25)";
         shell.style.opacity = "0";
 
         requestAnimationFrame(() => {
           envelopeStage.style.opacity = "1";
           shell.animate(
             [
-              {
-                transform: "translate(-50%, -50%) scale(0.22)",
-                opacity: 0,
-              },
-              {
-                transform: "translate(-50%, -50%) scale(1.06)",
-                opacity: 1,
-                offset: 0.6,
-              },
-              {
-                transform: "translate(-50%, -50%) scale(1)",
-                opacity: 1,
-              },
+              { transform: "translate(-50%, -50%) scale(0.25)", opacity: 0 },
+              { transform: "translate(-50%, -50%) scale(1.06)", opacity: 1, offset: 0.6 },
+              { transform: "translate(-50%, -50%) scale(1)", opacity: 1 },
             ],
             {
               duration: 620,
@@ -1499,16 +1430,8 @@
               shell.animate(
                 [
                   { filter: "drop-shadow(0 22px 34px rgba(0,0,0,0.28))", opacity: 1 },
-                  {
-                    filter: "drop-shadow(0 14px 20px rgba(0,0,0,0.22))",
-                    opacity: 1,
-                    offset: 0.2,
-                  },
-                  {
-                    filter: "drop-shadow(0 8px 14px rgba(0,0,0,0.12))",
-                    opacity: 0.9,
-                    offset: 0.45,
-                  },
+                  { filter: "drop-shadow(0 14px 20px rgba(0,0,0,0.22))", opacity: 1, offset: 0.2 },
+                  { filter: "drop-shadow(0 8px 14px rgba(0,0,0,0.12))", opacity: 0.9, offset: 0.45 },
                   { filter: "drop-shadow(0 0 0 rgba(0,0,0,0))", opacity: 0 },
                 ],
                 {
