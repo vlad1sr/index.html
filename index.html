@@ -333,6 +333,41 @@
         pointer-events: none;
       }
 
+      .envelope-pocket {
+        position: absolute;
+        left: 7%;
+        right: 7%;
+        top: 10.5%;
+        height: 28%;
+        border-radius: 18px;
+        background:
+          linear-gradient(
+            180deg,
+            rgba(55, 35, 18, 0.26),
+            rgba(24, 14, 8, 0.1) 45%,
+            rgba(255, 255, 255, 0.03) 100%
+          ),
+          linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent);
+        clip-path: polygon(0 0, 50% 72%, 100% 0, 100% 100%, 0 100%);
+        z-index: 2;
+        pointer-events: none;
+        opacity: 0.95;
+      }
+
+      .envelope-pocket::before {
+        content: "";
+        position: absolute;
+        inset: 8% 8% 2% 8%;
+        border-radius: 14px;
+        background: linear-gradient(
+          180deg,
+          rgba(0, 0, 0, 0.18),
+          rgba(255, 255, 255, 0.02)
+        );
+        filter: blur(0.2px);
+        opacity: 0.55;
+      }
+
       .envelope-front {
         position: absolute;
         left: 0;
@@ -479,8 +514,8 @@
         position: absolute;
         left: 7%;
         width: 86%;
-        height: 68%;
-        bottom: 10%;
+        height: 64%;
+        bottom: 12%;
         border-radius: 18px;
         background:
           linear-gradient(
@@ -493,7 +528,7 @@
         box-shadow:
           inset 0 1px 0 rgba(255, 255, 255, 0.4),
           0 14px 24px rgba(0, 0, 0, 0.09);
-        transform: translateY(24%) translateZ(0);
+        transform: translateY(30%) translateZ(0);
         z-index: 2;
         touch-action: none;
         pointer-events: auto;
@@ -1183,7 +1218,7 @@
         );
 
         makeParticleBurst(x, y, 66, 9.5, 3, 7, 1050, "spark");
-        setTimeout(() => showEnvelope(x, y), 120);
+        setTimeout(() => showEnvelope(x, y), 60);
       }
 
       function showEnvelope(originX, originY) {
@@ -1191,6 +1226,7 @@
         envelopeStage.innerHTML = `
           <div class="envelope-shell" id="envelopeShell">
             <div class="envelope-back"></div>
+            <div class="envelope-pocket"></div>
             <div class="paper" id="paper">
               <div class="paper-handle"></div>
               <div class="paper-grip">тянуть вверх</div>
@@ -1225,8 +1261,8 @@
         let extracting = false;
         let finished = false;
         let dragStartY = 0;
-        let dragStartTranslate = 24;
-        let currentTranslate = 24;
+        let dragStartTranslate = 30;
+        let currentTranslate = 30;
         let autoPullTimer = null;
         let draggingPointerId = null;
 
@@ -1235,7 +1271,7 @@
           paper.style.transform = `translateY(${currentTranslate}%) translateZ(0)`;
         }
 
-        paper.style.transform = "translateY(24%) translateZ(0)";
+        paper.style.transform = "translateY(30%) translateZ(0)";
 
         shell.style.position = "absolute";
         shell.style.left = originX + "px";
@@ -1269,7 +1305,7 @@
 
           paper.animate(
             [
-              { transform: "translateY(24%) scale(1)" },
+              { transform: "translateY(30%) scale(1)" },
               { transform: "translateY(18%) scale(1.008)" },
             ],
             {
@@ -1429,9 +1465,20 @@
 
               shell.animate(
                 [
-                  { filter: "drop-shadow(0 22px 34px rgba(0,0,0,0.28))", opacity: 1 },
-                  { filter: "drop-shadow(0 14px 20px rgba(0,0,0,0.22))", opacity: 1, offset: 0.2 },
-                  { filter: "drop-shadow(0 8px 14px rgba(0,0,0,0.12))", opacity: 0.9, offset: 0.45 },
+                  {
+                    filter: "drop-shadow(0 22px 34px rgba(0,0,0,0.28))",
+                    opacity: 1,
+                  },
+                  {
+                    filter: "drop-shadow(0 14px 20px rgba(0,0,0,0.22))",
+                    opacity: 1,
+                    offset: 0.2,
+                  },
+                  {
+                    filter: "drop-shadow(0 8px 14px rgba(0,0,0,0.12))",
+                    opacity: 0.9,
+                    offset: 0.45,
+                  },
                   { filter: "drop-shadow(0 0 0 rgba(0,0,0,0))", opacity: 0 },
                 ],
                 {
