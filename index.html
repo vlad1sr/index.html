@@ -263,6 +263,36 @@
         overflow: visible;
       }
 
+      .envelope-shell::before {
+        content: "";
+        position: absolute;
+        inset: -2px;
+        border-radius: 30px;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.06),
+          rgba(0, 0, 0, 0.08)
+        );
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .envelope-shell::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 28px;
+        pointer-events: none;
+        background: radial-gradient(
+          130px 90px at 50% 18%,
+          rgba(255, 255, 255, 0.12),
+          transparent 68%
+        );
+        z-index: 6;
+        mix-blend-mode: screen;
+        opacity: 0.45;
+      }
+
       .envelope-back {
         position: absolute;
         inset: 0;
@@ -690,7 +720,7 @@
 
     <button class="music-btn" id="musicBtn">Включить музыку</button>
     <div class="tiny-note">
-      🎵 M. — Anıl Emre Daldal
+      Для музыки добавь файл music.mp3 рядом с index.html
     </div>
 
     <audio id="music" loop preload="auto">
@@ -1204,7 +1234,7 @@
               <div class="paper-handle"></div>
               <div class="paper-grip">тянуть вверх</div>
               <div class="paper-content" id="paperContent">
-                <img class="paper-qr" src="lolqr.png" alt="lolqr.png" />
+                <img class="paper-qr" src="netqr.png" alt="netqr.png" />
               </div>
             </div>
             <div class="envelope-front"></div>
@@ -1234,8 +1264,8 @@
         let extracting = false;
         let finished = false;
         let dragStartY = 0;
-        let dragStartTranslate = 24;
-        let currentTranslate = 24;
+        let dragStartTranslate = 18;
+        let currentTranslate = 18;
         let autoPullTimer = null;
         let draggingPointerId = null;
 
@@ -1438,7 +1468,10 @@
 
               shell.animate(
                 [
-                  { filter: "drop-shadow(0 22px 34px rgba(0,0,0,0.28))", opacity: 1 },
+                  {
+                    filter: "drop-shadow(0 22px 34px rgba(0,0,0,0.28))",
+                    opacity: 1,
+                  },
                   {
                     filter: "drop-shadow(0 14px 20px rgba(0,0,0,0.22))",
                     opacity: 1,
@@ -1449,7 +1482,10 @@
                     opacity: 0.9,
                     offset: 0.45,
                   },
-                  { filter: "drop-shadow(0 0 0 rgba(0,0,0,0))", opacity: 0 },
+                  {
+                    filter: "drop-shadow(0 0 0 rgba(0,0,0,0))",
+                    opacity: 0,
+                  },
                 ],
                 {
                   duration: 760,
@@ -1598,4 +1634,4 @@
       );
     </script>
   </body>
-</html>
+  </html>
